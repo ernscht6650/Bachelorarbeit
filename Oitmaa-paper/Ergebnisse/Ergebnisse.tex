@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage{graphicx, amsmath,svg, float} % Required for inserting images
+\usepackage[ngerman]{babel}
+
+\title{Ergebnisse Schwinger-Modell}
+\author{Florian Stein}
+\date{\today}
+
+\begin{document}
+	\maketitle
+
+\section{Masseloser Fall}
+\subsection{Grundzustandsenergie}
+ 
+\begin{figure}[H]
+\centering
+\hspace*{-0cm}\includesvg[width=.8\linewidth]{/home/itg/Documents/LGT/Rechnungen/Bachelorarbeit/Oitmaa-paper/daten/Grundzustand.svg}
+\caption{Grundzustand für Werte von $Nag$ zwischen 5 und 20, sowie Gittergrößen $N$ zwischen 2 und 24. Zusätzlich Fitpolynome vom Grad 8 zur Extrapolation ins Kontinuum. Der Schwarze Punkt entspricht dem exakten Wert.}
+\end{figure}
+Für größeres $Nag$ liegen die Kurven recht nah beieinander, das endliche Volumen sollte also keinen sehr großen Einfluss haben.
+
+Für $Nag=20$ reicht die Rechenleistung nicht mehr wirklich um nah genug ans Kontinuum zu kommen.
+
+Die extrapolierten Werte hängen mehr oder weniger Stark vom Grad des Fitpolynoms ab, ab einem Grad von $\approx$ 5 sehen die Werte einigermaßen gescheit aus.
+
+Die exrapolierten Werte für $Nag=5,10$ bzw. $Nag=15,20$ schwanken dabei ungefähr in einem Bereich von 0,002  bzw. 0,02 um den Theoriewert.
+\subsection{Vektormasse}
+
+\begin{figure}[H]
+	\centering
+	\hspace*{-0cm}\includesvg[width=1\linewidth]{/home/itg/Documents/LGT/Rechnungen/Bachelorarbeit/Oitmaa-paper/daten/M1.svg}
+	\caption{Analog für die Vektormasse. Fitpolynome vom Grad 7}
+\end{figure}
+
+Hier weichen die verschiedenen Kurven schon deutlich stärker voneinander ab. 
+Die Extrapolationswerte schwanken um ca. 0,1, je nach Grad des Polynoms.
+\end{document}
