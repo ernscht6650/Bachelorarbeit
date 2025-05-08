@@ -81,7 +81,7 @@ def NonZeroSpin_entferner (H,M):
 def Op (N,x):
     Xi=kron(sigmam,kron(sigmaz,sigmap))-kron(sigmap,kron(sigmaz,sigmam))
     if N<4:
-        return -Xi
+        return -x*Xi
     else:
         A=kron(Xi, eye_array(2**(N-3)))
         for k in range(2,N-2):
@@ -111,12 +111,12 @@ def SR (N):
     #    A=kron(A,sigmax)
     return Antidiag(N)@Translation(N)
 
-def Mdurchg ():
-    for Volume in range(25,31,5):
+def M1durchg (mdurchg):
+    for Volume in range(5,26,5):
         for N in range(4, 26, 2):
             y=Volume/N
-            W=V(N)/(y**2)+WL(N)
-            Wprime=NonZeroSpin_entferner(W,N)
+            mu=2*mdurchg/y
+            Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N)
             #  omega=linalg.eigs(W, k=2, which='SR', return_eigenvectors=False)
             omegaprime=linalg.eigs(Wprime, k=2, which='SR', return_eigenvectors=False)
 
@@ -124,12 +124,28 @@ def Mdurchg ():
             print(Volume, y, np.real(omegaprime[1]/(2*N)*y**2), np.real(-0.5*(omegaprime[1]-omegaprime[0])*y))
     print('%\n')
 
-def Grundzustand ():
+def M1durchgV2 (mdurchg):
+    for eta in range(3,11,1):
+        y=eta/10
+        for N in range(4, 25, 2):
+            mu=2*mdurchg/y
+            if mu !=0:
+                Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N)
+            else:
+                Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N)
+            omegaprime=linalg.eigs(Wprime, k=2, which='SR', return_eigenvectors=False)
+
+            print(y, N, np.real(-0.5*(omegaprime[1]-omegaprime[0])*y))
+    print('%\n')
+
+def Grundzustand (mdurchg):
     for Volume in range(5,21,5):
         for N in range(4, 25, 2):
             y=Volume/N
+            mu=2*mdurchg/y
+
             #W=V(N)/(y**2)+WL(N)
-            Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N)
+            Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N)
             #  omega=linalg.eigs(W, k=2, which='SR', return_eigenvectors=False)
             omegaprime=linalg.eigs(Wprime, k=1, which='SR', return_eigenvectors=False)
 
@@ -137,24 +153,37 @@ def Grundzustand ():
             print(Volume, y, np.real(0.5*omegaprime[0]*y**2/N))
     print('\n')
 
+def GrundzustandV2 (mdurchg):
+    for eta in range(1,11,1):
+        y=eta/10
+        for N in range(4, 25, 2):
+            mu=2*mdurchg/y
+            #W=V(N)/(y**2)+WL(N)
+            if mu !=0:
+                Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N)
+            else:
+                Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N)
+            #  omega=linalg.eigs(W, k=2, which='SR', return_eigenvectors=False)
+            omegaprime=linalg.eigs(Wprime, k=1, which='SR', return_eigenvectors=False)
 
-def Dispersion (N,x):
-   # H=V(N)*x+WL(N)
-    K=10 #anzahl energien
+            #print(np.real(omega), np.real(omegaprime), "\n\n")
+            print(y, N, np.real(0.5*omegaprime[0]*y**2/N))
+    print('\n')
 
-    Hprime=NonZeroSpin_entferner(V(N)*x+WL(N),N)
-    #omega=linalg.eigs(H, k=K, which='SR', return_eigenvectors=True)
+
+def Dispersion (N,x,mdurchg):
+    K=20 #anzahl energien
+    mu=2*mdurchg*np.sqrt(x)
+
+    Hprime=NonZeroSpin_entferner(V(N)*x+WL(N)+mu*MassTerm(N),N)
+
     omegaprime=linalg.eigs(Hprime, k=K, which='SR', return_eigenvectors=True)
 
    # Op2=-Op(N,x)@Op(N,x)
-   # Op2_prime=NonZeroSpin_entferner(-Op(N,x)@Op(N,x),N)
+    Op2_prime=NonZeroSpin_entferner(-Op(N,x)@Op(N,x),N)
 
     #Sr=SR(N)
-    SRprime=NonZeroSpin_entferner(SR(N), N)
-
-   
-   # P=np.real(omega[1].H()@Op2@omega[1])
-   # Pprime=np.real(omegaprime[1].getH()@Op2_prime@omegaprime[1])
+    #SRprime=NonZeroSpin_entferner(SR(N), N)
 
    # phase=omega[1].getH()@Sr@omega[1]
     #phase_prime=omegaprime[1].getH()@SRprime@omegaprime[1]
@@ -164,9 +193,9 @@ def Dispersion (N,x):
 
     for i in range(0,K):
         #print(E[i],np.real(Herm(omega[1][:,i])@Op2@omega[1][:,i]) , Herm(omega[1][:,i])@Sr@omega[1][:,i], Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i]), Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
-        print(Eprime[i], Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i]) # np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i])
+        print(Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i])) # Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
 
-#Dispersion(16,2)
+Dispersion(22,3,5)
 
-Grundzustand()
+M1durchgV2(5)
 

@@ -1,10 +1,10 @@
 clc
 clearvars
-I=importdata("data_Vol_y_Grundzustanddurch2xN.dat");
+I=importdata("mdurchg_0.5_Vol_y_Grundzustanddurch2xN.dat");
 
 indices=[1:1:11];
 
-n=8
+n=7
 
 p5 = polyfit(I(indices,2),I(indices,3),n)
 p10 = polyfit(I(indices+11,2),I(indices+11,3),n)
@@ -35,8 +35,8 @@ hold off
 
 xlabel('$y$', 'Interpreter','latex')
 ylabel('$\frac{\omega_0}{2Nx}$', 'Interpreter','latex')
-xlim([-0.0, 1])
-ylim([-0.34 -0.2])
+xlim([-0.0, 1.1])
+ylim([-0.325 -0.1])
 
 yticks([-0.3 -0.275 -0.25 -0.225 -0.2 -0.175 -0.15 -0.125 -0.1])
 yticklabels(["-0.3" "" "" "" "-0.2" "" "" "" "-0.1"])
@@ -45,8 +45,7 @@ ax=gca;
 ax.FontSize=30;
 ax.LineWidth=2.5;
 
-daspect([8 1 1]);
+daspect([6 1 1]);
 
-yscale log
 box on;
 legend({"5", "10", "15", "20"}, "Location", "Southeast");

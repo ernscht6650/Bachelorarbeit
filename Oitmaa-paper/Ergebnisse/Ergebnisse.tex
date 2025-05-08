@@ -10,28 +10,50 @@
 	\maketitle
 
 \section{Masseloser Fall}
-\subsection{Grundzustandsenergie}
+\subsection{Grundzustandsenergiedichte und Vektormasse}
+Ich habe Werte f\"ur Grundzustand und Vektormasse auf 2 Arten bestimmt.
+\begin{itemize}
+	\item Vorgabe von $N/\sqrt[]{x} \in \{5,10,15,20\}$ und anschlie{\ss}ender Berechnung von $\omega_0/2Nx$ bzw. $M_1/g$ f\"ur $N$ zwischen 4 und 24. Jede Messreihe dann einzeln per Fit an Polynom ins Kontinuum extrapolieren.
+	\item Variation von $N$ zu vorgegebenem $y$. F\"ur jedes $y$ den Wert von  $\omega_0/2Nx$ bzw. $M_1/g$ im Limes $N\to \infty$, durch Polynomfit in $1/N$ bestimmen. Die so erhaltenen Werte dann per Fit an Polynom in $y$ ins Kontinuum extrapolieren.
+\end{itemize}
  
-\begin{figure}[H]
+ \subsection{Variante 1}
+ \subsubsection{Grundzustandsenergiedichte}
+ Offenbar kommt man im Fall $N/\sqrt{x}=20$ nicht mehr nah genug ans Kontinuum um ordentlich zu Extrapolieren. Ansonsten stimmen die verschiedenen Kurven in $y=0$ recht gut \"uberein, wie man es nach Struktur des Hamiltonians erwarten w\"urde.
+ 
+ Die Ergebnisse h\"angen dabei mehr oder weniger Stark vom Grad des Fitpolynoms ab. F\"ur die Plots habe ich exemplarisch einfach mal die genommen, welche am besten zum exakten Wert passen (Was ich sp\"ater nat\"urlich nicht mehr machen kann).
+ 
+ F\"ur Polynome mit Grad zwischen 4 und 8 bekommt man brauchbare Werte.
+ 
+ Die extrapolierten Werte für $Ny=5,10$ bzw. $Ny=15,20$ schwanken dabei, je nach dem Gew\"ahltem Grad, ungefähr in einem Bereich von 0,002  bzw. 0,02 um den Theoriewert.
+ 
+\begin{figure}[]
 \centering
-\hspace*{-0cm}\includesvg[width=.8\linewidth]{/home/itg/Documents/LGT/Rechnungen/Bachelorarbeit/Oitmaa-paper/daten/Grundzustand.svg}
-\caption{Grundzustand für Werte von $Nag$ zwischen 5 und 20, sowie Gittergrößen $N$ zwischen 2 und 24. Zusätzlich Fitpolynome vom Grad 8 zur Extrapolation ins Kontinuum. Der Schwarze Punkt entspricht dem exakten Wert.}
+\hspace*{-0cm}\includesvg[width=0.8\linewidth]{/home/itg/Documents/LGT/Rechnungen/Bachelorarbeit/Oitmaa-paper/daten/Grundzustand.svg}
+\caption{Grundzustand für Werte von $Ny$ zwischen 5 und 20, sowie Gittergrößen $N$ zwischen 4 und 24. Zusätzlich Fitpolynome vom Grad 8 zur Extrapolation ins Kontinuum. Der Schwarze Punkt entspricht dem exakten Wert.}
 \end{figure}
-Für größeres $Nag$ liegen die Kurven recht nah beieinander, das endliche Volumen sollte also keinen sehr großen Einfluss haben.
 
-Für $Nag=20$ reicht die Rechenleistung nicht mehr wirklich um nah genug ans Kontinuum zu kommen.
+\subsubsection{Vektormasse}
+In diesem Fall liegen die verschiedenen Kurven dann schon wesentlich weiter auseinander und auch die Fitwerte sind nur auf ca. 0,1 genau
 
-Die extrapolierten Werte hängen mehr oder weniger Stark vom Grad des Fitpolynoms ab, ab einem Grad von $\approx$ 5 sehen die Werte einigermaßen gescheit aus.
-
-Die exrapolierten Werte für $Nag=5,10$ bzw. $Nag=15,20$ schwanken dabei ungefähr in einem Bereich von 0,002  bzw. 0,02 um den Theoriewert.
-\subsection{Vektormasse}
-
-\begin{figure}[H]
+\begin{figure}[]
 	\centering
-	\hspace*{-0cm}\includesvg[width=1\linewidth]{/home/itg/Documents/LGT/Rechnungen/Bachelorarbeit/Oitmaa-paper/daten/M1.svg}
+	\hspace*{-0cm}\includesvg[width=0.85\linewidth]{/home/itg/Documents/LGT/Rechnungen/Bachelorarbeit/Oitmaa-paper/daten/M1.svg}
 	\caption{Analog für die Vektormasse. Fitpolynome vom Grad 7}
 \end{figure}
 
-Hier weichen die verschiedenen Kurven schon deutlich stärker voneinander ab. 
-Die Extrapolationswerte schwanken um ca. 0,1, je nach Grad des Polynoms.
+\subsection{Variante 2}
+F\"uer die Grundzustandsenergiedichte liefert diese Methode bessere Ergbnisse, die Genauigkeit liegt im Bereich $\approx 0,001$. Die Werte f\"ur die Vektormasse sind deutlich unpr\"aziser und schwanken ca. um 0,2.
+
+\begin{figure}[]
+	\centering
+	\hspace*{-0cm}\includesvg[width=0.75\linewidth]{/home/itg/Documents/LGT/Rechnungen/Bachelorarbeit/Oitmaa-paper/daten/GrundzustandV2.svg}
+	\caption{Variante 2. Schwarz sind die Werte f\"ur endliches $N$. Rot die Extrapolierten Punkte f\"ur $N\to \infty$ bzw. das Fitpolynom an diese Punkte.}
+\end{figure}
+\begin{figure}[]
+	\centering
+	\hspace*{-0cm}\includesvg[width=0.8\linewidth]{/home/itg/Documents/LGT/Rechnungen/Bachelorarbeit/Oitmaa-paper/daten/M1V2.svg}
+	\caption{Analog für die Vektormasse. Fitpolynome vom Grad 7}
+\end{figure}
+
 \end{document}
