@@ -1,9 +1,9 @@
 clc
 clearvars
-D=importdata("mg0_y_N_M1.dat");
+D=importdata("mg05_y_N_M1_E0.dat");
 
 NumN=11;
-NumY=21;
+NumY=7;
 D2=zeros(NumN+2,NumY);
 indices=[1:1:NumN];
 
@@ -13,7 +13,7 @@ for i=[1:NumY]
     D2(1,i)=D(1+(i-1)*NumN,1);
 end
 
-deg=6;
+deg=3;
 deg2=4;
 
 for j=[1:NumY]
@@ -40,7 +40,7 @@ plot(a, b, ".k", 'MarkerSize', 20)
 hold off
 
 xlim([-0.0, 1.8])
-ylim([0.5 1.6])
+ylim([1 3])
 
 ax=gca;
 ax.FontSize=30;
