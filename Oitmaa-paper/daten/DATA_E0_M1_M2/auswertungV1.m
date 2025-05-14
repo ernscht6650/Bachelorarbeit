@@ -5,9 +5,11 @@ NumVol=4
 NumY=9
 NumMasses=5
 
-CurrMass=3
-Obs=5
-deg=6
+CurrMass=1
+Obs=4
+deg=4
+
+Fitpoints=[5:9]
 
 D2=zeros(NumVol,NumY,NumMasses);
 Y=zeros(NumVol,NumY);
@@ -18,7 +20,7 @@ Colors=[[0 0 1]; [0 1 0]; [1 0 0]; [0 1 1]]
 Vols=[10, 15, 20, 25];
 N=[8:2:24];
 x=linspace(0,3)
-Fitpoints=[1:8]
+
 
 for i=[1:NumVol]
     D2(i,indices,CurrMass)=D(((CurrMass-1)*NumY*NumVol+(i-1)*NumY)+indices,Obs);
@@ -31,6 +33,6 @@ for i=[1:NumVol]
     plot(Y(i,:),D2(i,:,CurrMass), ".", "MarkerSize", 20, "Color", Colors(i,:))
 end
 hold off
-ylim([-0.4 0])
+%ylim([0 12])
 
 

@@ -118,11 +118,11 @@ for CurMass=[1:4]
         digits(i)=floor(p2(deg2+1)/(abs(p2(deg2+1)))*round(p2(deg2+1), k+1)*10^(i-1)-Rest);
     end
     p2(deg2+1)
-    dgts=string(digits)
-   
+    string(digits)
+
     Werte(CurMass)="-0."   %string(round(p2(deg2+1),k+1));
-    for i=[2:k+2]
-        Werte(CurMass)=Werte(CurMass)+dgts(i)
+    for i=[2,k+2]
+        
     end
 
     A=zeros(1, NumY);
@@ -175,12 +175,10 @@ for CurMass=[1:4]
     xlim([0.0, 1])
     %ylim([-0.35 -0.099])
     dummyh = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
-     dummyh2 = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
-    legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), "$\omega_0/2Nx=$"+"-0."+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","northwest", "Box","off")
-    
+    legend(dummyh, "m/g="+Masses(CurMass), "Interpreter","latex", "Location","northwest", "Box","off")
     %text(-0.25, 0.1,'A Simple Plot','Color','red','FontSize',10)
        hold off
 end
 
 
-"-0."+Werte+"("+Fehler+")"
+Werte+"("+Fehler+")"
