@@ -5,33 +5,35 @@ D=importdata("mg_y_N_M1_E0_M2_Alles.dat");
 
 
 NumN=8;
-NumY=24;
+NumY=24; %24
 NumMasses=6;
 
 Masses=["0" "0.125" "0.25" "0.5" "5" "10"]
-Werte=zeros(NumMasses,1);
-Fehler=zeros(NumMasses,1);
+Massen=[0 0.125 0.25 0.5 5 10]
+Werte=strings(NumMasses,1);
+Fehler=strings(NumMasses,1);
+Messwert=[ "$M_V/g=$", "$\omega_0/2Nx=$","$M_S/g=$"]
 
 %CurMass=4;
-Obs=5
+Obs=4
 
 deg=3;
 
-degMin=2
-degMax=3
+degMin=deg-1
+degMax=deg+1
 
-deg2=5;
-deg2Min=1;
-deg2Max=7;
+deg2=2;
+deg2Min=deg2-1;
+deg2Max=deg2;
 
 Fit1Range=[3:8]
-Fit2range=[1:13]
+Fit2range=[1:14]
 
     D2=zeros(NumN+1,NumY, NumMasses);
     indices=[1:1:NumN];
 
-    t = tiledlayout(2,2);
-for CurMass=[1:4]        
+    t = tiledlayout(3,2);
+for CurMass=[1:6]        
     nexttile
     for i=[1:NumY]
         D2(indices,i,CurMass)=D((CurMass-1)*(NumN*NumY)+indices+(i-1)*NumN,Obs);
@@ -110,6 +112,12 @@ for CurMass=[1:4]
 
     Fehler(CurMass)=string(round(max(error2)*10^(k+1) ));
     digits=zeros(k+2,1);
+    
+    Temp=p2(deg2+1)
+    if Obs ~=5
+        p2(deg2+1)=p2(deg2+1)-2*Massen(CurMass)
+    end
+
     for i=[1:k+2]
         Rest=0;
         for j=[1:i-1]
@@ -117,10 +125,16 @@ for CurMass=[1:4]
         end
         digits(i)=floor(p2(deg2+1)/(abs(p2(deg2+1)))*round(p2(deg2+1), k+1)*10^(i-1)-Rest);
     end
-    p2(deg2+1)
+    
+    
     dgts=string(digits)
    
-    Werte(CurMass)="-0."   %string(round(p2(deg2+1),k+1));
+    if p2(deg2+1)>0
+        Werte(CurMass)=string(floor(p2(deg2+1)))+"."
+    else
+        Werte(CurMass)="-"+string(ceil(p2(deg2+1)))+"."
+    end
+
     for i=[2:k+2]
         Werte(CurMass)=Werte(CurMass)+dgts(i)
     end
@@ -130,13 +144,14 @@ for CurMass=[1:4]
     for i=1:NumY
         A(i)=D2(NumN+1, i,CurMass);
     end
+    p2(deg2+1)=Temp
 
     %plot(D([1:NumY]*NumN,2), A, ".r", 'MarkerSize', 20)
 
-    heb=errorbar(0.0,fitwerte2(deg2),error2(1,1), error2(2,1), ".r", 'MarkerSize', 15);
-    heb.LineWidth = 2;
+    heb=errorbar(0.0,fitwerte2(deg2),error2(1,1), error2(2,1), ".r", 'MarkerSize', 10);
+    heb.LineWidth = 1.5;
     hold on
-    plot(x, polyval(p2,x), "-r", "LineWidth", 2.5)
+    plot(x, polyval(p2,x), "-r", "LineWidth", 2)
 
     bussje=errorbar(D([1:NumY]*NumN,2), A, errors(1,:), errors(2,:), ".k", 'MarkerSize', 15);
     bussje.LineWidth = 1.5;
@@ -163,7 +178,7 @@ for CurMass=[1:4]
 
 
     ax=gca;
-    ax.FontSize=20;
+    ax.FontSize=10;
     ax.LineWidth=1;
     xlabel('$y$', 'Interpreter','latex')
    % ylabel('$\omega_0/2Nx$', 'Interpreter','latex')
@@ -176,11 +191,16 @@ for CurMass=[1:4]
     %ylim([-0.35 -0.099])
     dummyh = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
      dummyh2 = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
-    legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), "$\omega_0/2Nx=$"+"-0."+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","northwest", "Box","off")
-    
+    legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), Messwert(Obs-3)+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","southeast", "Box","off")
+    box on
     %text(-0.25, 0.1,'A Simple Plot','Color','red','FontSize',10)
        hold off
 end
 
 
 "-0."+Werte+"("+Fehler+")"
+
+%xi=5
+%plot(1./N, D2([1:NumN],xi,5), ".")
+%hold on
+%plot(0, D2(NumN+1, xi,5),".")
