@@ -12,11 +12,11 @@ deg=4
 Fitpoints=[6:9]
 
 limits=zeros(4,2,3);
-limits(:,:,1)=[[0.5 1]; [0.75 1.15]; [0.97 1.4]; [1.4 1.85]];
+limits(:,:,1)=[[0.55 0.92]; [0.79 1.15]; [1.03 1.35]; [1.5 1.85]];
 limits(:,:,2)=[[-0.33 -0.2]; [-0.33 -0.18]; [-0.33 -0.15]; [-0.33 -0.1]];
 limits(:,:,3)=[[1.15 1.5]; [1.35 1.7]; [1.5 1.9]; [1.95 2.4]];
 
-xlims=[[0 1.5]; [0 1]; [0 1.5]]
+xlims=[[0 1.4]; [0 1]; [0 1.5]]
 
 ylbl=["$M_V/g$", "$\omega_0/2Nx$", "$M_S/g$"]
 Vol=["5" "10" "15" "20"]
@@ -26,7 +26,7 @@ D2=zeros(NumVol,NumY,NumMasses);
 Y=zeros(NumVol,NumY);
 indices=[1:1:NumY];
 
-Colors=[[0 0 1]; [0 1 0]; [1 0 0]; [0 1 1]]
+Colors=[[0 0 1]; [0 1 0]; [1 0 0]; [0.3  0.5 1]]
 
 Vols=[10, 15, 20, 25];
 N=[8:2:24];
@@ -47,12 +47,15 @@ for i=[1:NumVol]
     title( "$m/g=$"+Masses(CurrMass), "Interpreter","latex")
     hold on
     p(deg+1)
-    plot(Y(i,:),D2(i,:,CurrMass), ".", "MarkerSize", 15, "Color", Colors(i,:))
+end
+for i=[1:NumVol]
+
+    plot(Y(i,:),D2(i,:,CurrMass), ".", "MarkerSize", 18, "Color", Colors(i,:))
 end
 if Obs==6
-    legend("","10","", "15","", "20","", "25", "interpreter", "latex","Location","northeast", "box", "on")
+    legend("","","","","10", "15", "20", "25", "interpreter", "latex","Location","northeast", "box", "on")
 else
-legend("","10","", "15","", "20","", "25", "interpreter", "latex","Location","southeast", "box", "on")
+legend("","","","","10", "15", "20", "25", "interpreter", "latex","Location","southeast", "box", "on")
 end
 box on
 hold off

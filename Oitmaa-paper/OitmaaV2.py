@@ -217,11 +217,11 @@ def Phase (N,x,mdurchg):
     for i in range(0,K):
         print(Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i])) # Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
 
-def SkalarV2(mdurchg):
-    for eta in range(325,1001,50):
+def SkalarV2(mdurchg, begin):
+    for eta in range(begin,1001,25):
         y=eta/1000
         for N in range(10, 25, 2):
-            K=20
+            K=18
             mu=2*mdurchg/y
             if mu !=0:
                 omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
@@ -244,7 +244,7 @@ def SkalarV2(mdurchg):
 
 
 def Skalar(mdurchg):
-    for Vol in range(10,26,5):
+    for Vol in range(20,26,5):
         for N in range(8, 25, 2):
             K=20
             y=Vol/N
@@ -265,12 +265,18 @@ def Skalar(mdurchg):
                     scalar=i
                 i=i+1 
             
-            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y))
+            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
     print("%")
 
 
 
 
 
-Skalar(5)
-Skalar(10)
+
+
+SkalarV2(0,300)
+SkalarV2(0.125,300)
+SkalarV2(0.25,300)
+SkalarV2(0.5,300)
+SkalarV2(5,300)
+SkalarV2(10,300)

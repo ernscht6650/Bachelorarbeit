@@ -1,11 +1,11 @@
 clc
 clearvars
-D=importdata("mg_y_N_M1_E0_M2_Alles4.dat");
+D=importdata("skalarzustaende_viertelse2.dat");
 
 
 
 NumN=8;
-NumY=38; %24
+NumY=14; %24
 NumMasses=6;
 
 Masses=["0" "0.125" "0.25" "0.5" "5" "10"]
@@ -14,13 +14,8 @@ Werte=strings(NumMasses,1);
 Fehler=strings(NumMasses,1);
 Messwert=[ "$M_V/g=$", "$\omega_0/2Nx=$","$M_S/g=$"]
 
-limits=zeros(6,2,3);
-limits(:,:,1)=[[0.5 0.8]; [0.75 1.02]; [1 1.25]; [1.49 1.7];[10.35 10.55]; [20.2 20.7]];
-limits(:,:,2)=[[-0.33 -0.2]; [-0.33 -0.18]; [-0.33 -0.15]; [-0.33 -0.1]; [-0.33 -0.1];[-0.33 -0.1]];
-limits(:,:,3)=[[1.15 1.5]; [1.35 1.7]; [1.5 1.9]; [1.95 2.4];[1.95 2.4];[1.95 2.4]];
-
 %CurMass=4;
-Obs=4
+Obs=6
 
 deg=3;
 
@@ -32,7 +27,7 @@ deg2Min=deg2-1;
 deg2Max=deg2+1;
 
 Fit1Range=[4:8]
-Fit2range=[5:25]
+Fit2range=[1:14]
 
     D2=zeros(NumN+1,NumY, NumMasses);
     indices=[1:1:NumN];
@@ -193,7 +188,7 @@ for CurMass=[1:6]
     %yticklabels(["-0.3" "" "" "" "-0.2" "" "" "" "-0.1"])
 
     xlim([0.0, 1])
-    ylim(limits(CurMass,:,Obs-3))
+    ylim([-0.35 -0.099])
     dummyh = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
      dummyh2 = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
     legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), Messwert(Obs-3)+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","southeast", "Box","off")
