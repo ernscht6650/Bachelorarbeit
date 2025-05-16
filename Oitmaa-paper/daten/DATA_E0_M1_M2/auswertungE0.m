@@ -191,7 +191,8 @@ for CurMass=[1:6]
     %ylim([-0.35 -0.099])
     dummyh = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
      dummyh2 = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
-    legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), Messwert(Obs-3)+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","southeast", "Box","off")
+    %legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), Messwert(Obs-3)+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","southeast", "Box","off")
+    title("$m/g=$"+Masses(CurMass)+", "+ Messwert(Obs-3)+Werte(CurMass)+"("+Fehler(CurMass)+")",  "Interpreter","latex")
     box on
     %text(-0.25, 0.1,'A Simple Plot','Color','red','FontSize',10)
        hold off

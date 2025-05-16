@@ -272,18 +272,5 @@ def Skalar(mdurchg):
 
 
 
-Skalar(0)
-Skalar(0.125)
-Skalar(0.25)
-Skalar(0.5)
-
-SkalarV2(0.125)
-
-SkalarV2(0.25)
-
-SkalarV2(0.5)
-SkalarV2(5)
-SkalarV2(10)
-
-SkalarV2(5)
-SkalarV2(10)
+Skalar(5)
+Skalar(10)

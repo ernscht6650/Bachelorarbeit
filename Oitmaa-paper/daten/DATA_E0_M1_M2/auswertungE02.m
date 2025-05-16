@@ -1,6 +1,6 @@
 clc
 clearvars
-D=importdata("mg_y_N_M1_E0_M2_Alles2.dat");
+D=importdata("mg_y_N_M1_E0_M2_Alles3.dat");
 
 
 
@@ -32,8 +32,8 @@ Fit2range=[3:13]
     D2=zeros(NumN+1,NumY, NumMasses);
     indices=[1:1:NumN];
 
-    t = tiledlayout(1,1);
-for CurMass=[1:1]        
+    t = tiledlayout(3,2);
+for CurMass=[1:6]        
     nexttile
     for i=[1:NumY]
         D2(indices,i,CurMass)=D((CurMass-1)*(NumN*NumY)+indices+(i-1)*NumN,Obs);
