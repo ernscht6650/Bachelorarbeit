@@ -179,7 +179,7 @@ def GrundzustandV2 (mdurchg):
 
 
 def Dispersion (N,x,mdurchg):
-    K=10 #anzahl energien
+    K=15 #anzahl energien
     mu=2*mdurchg*np.sqrt(x)
 
     #Hprime=NonZeroSpin_entferner(V(N)*x+WL(N)+mu*MassTerm(N),N)
@@ -198,7 +198,7 @@ def Dispersion (N,x,mdurchg):
     for i in range(0,K):
         #print(E[i],np.real(Herm(omega[1][:,i])@Op2@omega[1][:,i]) , Herm(omega[1][:,i])@Sr@omega[1][:,i], Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i]), Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
         #print(Eprime[i], E[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i]), np.real(Herm(omega[1][:,i])@Op2@omega[1][:,i]), Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i], Herm(omega[1][:,i])@SR(N)@omega[1][:,i]) 
-        print(Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i]), Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i]) 
+        print(Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i]), np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])) 
 
 def Phase (N,x,mdurchg):
     K=20 #anzahl energien
@@ -218,7 +218,7 @@ def Phase (N,x,mdurchg):
         print(Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i])) # Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
 
 def SkalarV2(mdurchg, begin):
-    for eta in range(begin,1001,25):
+    for eta in range(begin,300,25):
         y=eta/1000
         for N in range(10, 25, 2):
             K=18
@@ -269,14 +269,73 @@ def Skalar(mdurchg):
     print("%")
 
 
+def SkalarV2ren(mdurchg, begin):
+    for eta in range(begin,1000,25):
+        y=eta/1000
+        for N in range(10, 25, 2):
+            K=18
+            mu=2*mdurchg/y-0.25
+            if mu !=0:
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
+            else:
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N), k=K, which='SR', return_eigenvectors=True)
+            
+            SRprime=NonZeroSpin_entferner(SR(N), N)
+            Eprime=np.real(omegaprime[0])
+
+            scalar=0
+            i=2
+            while scalar==0:
+                #print(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
+                if np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])>0:
+                    scalar=i
+                i=i+1 
+
+            print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
 
 
 
+def Skalarren(mdurchg):
+    for Vol in range(20,26,5):
+        for N in range(8, 25, 2):
+            K=20
+            y=Vol/N
+            mu=2*mdurchg/y-0.25
+            if mu !=0:
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
+            else:
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N), k=K, which='SR', return_eigenvectors=True)
+            
+            SRprime=NonZeroSpin_entferner(SR(N), N)
+            Eprime=np.real(omegaprime[0])
+
+            scalar=0
+            i=2
+            while scalar==0:
+                #print(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
+                if np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])>0:
+                    scalar=i
+                i=i+1 
+            
+            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
+    print("%")
 
 
-SkalarV2(0,300)
-SkalarV2(0.125,300)
-SkalarV2(0.25,300)
-SkalarV2(0.5,300)
-SkalarV2(5,300)
-SkalarV2(10,300)
+SkalarV2ren(0,500)
+SkalarV2ren(0.125,500)
+SkalarV2ren(0.25,500)
+SkalarV2ren(0.5,500)
+SkalarV2ren(5,500)
+SkalarV2ren(10,500)
+
+print(" ")
+
+Skalarren(0)
+Skalarren(0.125)
+Skalarren(0.25)
+Skalarren(0.5)
+Skalarren(5)
+Skalarren(10)
+
+
+

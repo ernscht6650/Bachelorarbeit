@@ -12,33 +12,34 @@ Masses=["0" "0.125" "0.25" "0.5" "5" "10"]
 Massen=[0 0.125 0.25 0.5 5 10]
 Werte=strings(NumMasses,1);
 Fehler=strings(NumMasses,1);
-Messwert=[ "$M_V/g=$", "$\omega_0/2Nx=$","$M_S/g=$"]
+Messwert=[ "$M_V/g$", "$\omega_0/2Nx$","$M_S/g$"]
 
 limits=zeros(6,2,3);
-limits(:,:,1)=[[0.5 0.8]; [0.75 1.02]; [1 1.25]; [1.49 1.7];[10.35 10.55]; [20.2 20.7]];
-limits(:,:,2)=[[-0.33 -0.2]; [-0.33 -0.18]; [-0.33 -0.15]; [-0.33 -0.1]; [-0.33 -0.1];[-0.33 -0.1]];
+limits(:,:,1)=[[0.47 0.79]; [0.7 1.01]; [1 1.25]; [1.49 1.7];[10.35 10.55]; [20.2 20.7]];
+limits(:,:,2)=[[-0.34 -0.22]; [-0.332 -0.19]; [-0.324 -0.17]; [-0.33 -0.13]; [-0.33 0.0];[-0.33 0]];
 limits(:,:,3)=[[1.15 1.5]; [1.35 1.7]; [1.5 1.9]; [1.95 2.4];[1.95 2.4];[1.95 2.4]];
 
 %CurMass=4;
-Obs=4
+Obs=5
 
 deg=3;
 
 degMin=deg-1
-degMax=deg
+degMax=deg+1
 
-deg2=2;
+deg2=4;
 deg2Min=deg2-1;
-deg2Max=deg2+1;
+deg2Max=deg2+2;
 
-Fit1Range=[4:8]
-Fit2range=[5:25]
+Fit1Range=[3:8]
+Fit2range=[[1 25]; [1 25]; [1 25]; [1 25];[1 25];[1 25]]
 
     D2=zeros(NumN+1,NumY, NumMasses);
     indices=[1:1:NumN];
 
     t = tiledlayout(3,2);
-for CurMass=[1:6]        
+for CurMass=[1:6]   
+    F2R=[Fit2range(CurMass,1):Fit2range(CurMass,2)]
     nexttile
     for i=[1:NumY]
         D2(indices,i,CurMass)=D((CurMass-1)*(NumN*NumY)+indices+(i-1)*NumN,Obs);
@@ -94,13 +95,13 @@ for CurMass=[1:6]
     Y=D([1:NumY]*NumN,2);
 
     for k=[deg2Min:deg2Max]
-        [p2, delta2]=polyfit(Y(Fit2range), D2(NumN+1,Fit2range,CurMass), k);
+        [p2, delta2]=polyfit(Y(F2R), D2(NumN+1,F2R,CurMass), k);
         [y_fit2,Uns2] = polyval(p2,0,delta2);
         fitwerte2(k)=y_fit2(1);
         Unsicherheiten2(k)=Uns2(1);
     end
 
-    [p2, delta2]=polyfit(Y(Fit2range), D2(NumN+1,Fit2range,CurMass), deg2);
+    [p2, delta2]=polyfit(Y(F2R), D2(NumN+1,F2R,CurMass), deg2);
     
 
     error2=zeros(2,1);
@@ -132,16 +133,16 @@ for CurMass=[1:6]
     end
     
     
-    dgts=string(digits)
+    dgts=string(digits);
    
     if p2(deg2+1)>0
-        Werte(CurMass)=string(floor(p2(deg2+1)))+"."
+        Werte(CurMass)=string(floor(p2(deg2+1)))+".";
     else
-        Werte(CurMass)="-"+string(ceil(p2(deg2+1)))+"."
+        Werte(CurMass)="-"+string(ceil(p2(deg2+1)))+".";
     end
 
     for i=[2:k+2]
-        Werte(CurMass)=Werte(CurMass)+dgts(i)
+        Werte(CurMass)=Werte(CurMass)+dgts(i);
     end
 
     A=zeros(1, NumY);
@@ -186,7 +187,7 @@ for CurMass=[1:6]
     ax.FontSize=10;
     ax.LineWidth=1;
     xlabel('$y$', 'Interpreter','latex')
-   % ylabel('$\omega_0/2Nx$', 'Interpreter','latex')
+   % ylabel(Messwert(Obs-3), 'Interpreter','latex')
     %daspect([8 1 1])
 
     %yticks([-0.3 -0.275 -0.25 -0.225 -0.2 -0.175 -0.15 -0.125 -0.1])
@@ -196,7 +197,7 @@ for CurMass=[1:6]
     ylim(limits(CurMass,:,Obs-3))
     dummyh = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
      dummyh2 = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
-    legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), Messwert(Obs-3)+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","southeast", "Box","off")
+    legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), Messwert(Obs-3)+"="+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","southeast", "Box","off")
     box on
 
    
@@ -206,7 +207,9 @@ end
 
 "-0."+Werte+"("+Fehler+")"
 
-%xi=1
-%plot(1./N, D2([1:NumN],xi,1), ".")
-%hold on
-%plot(0, D2(NumN+1, xi,1),".")
+xi=1;
+%plot(1./N, D2([1:NumN],xi,3), ".", "MarkerSize", 20)
+hold on
+%plot(0, D2(NumN+1, xi,3),".","MarkerSize", 20)
+
+hold off

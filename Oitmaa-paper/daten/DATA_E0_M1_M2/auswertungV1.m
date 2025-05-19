@@ -7,9 +7,9 @@ NumMasses=4
 
 CurrMass=2
 Obs=6
-deg=4
+deg=2
 
-Fitpoints=[6:9]
+Fitpoints=[5:9]
 
 limits=zeros(4,2,3);
 limits(:,:,1)=[[0.55 0.92]; [0.79 1.15]; [1.03 1.35]; [1.5 1.85]];
@@ -62,6 +62,6 @@ hold off
 ylim(limits(CurrMass,:,Obs-3))
 xlim(xlims(Obs-3,:))
 xlabel("y", "Interpreter", "latex")
-ylabel(ylbl(Obs-3), "Interpreter","latex")
+%ylabel(ylbl(Obs-3), "Interpreter","latex")
 
 end

@@ -18,16 +18,16 @@ limts=[[1 1.5]; [1.2 1.8]; [1.6 2.1]; [1.8 2.5]; [10.4 11]; [20.4 21]]
 %CurMass=4;
 Obs=6
 
-deg=3;
+deg=2;
 
-degMin=deg-1
+degMin=deg
 degMax=deg
 
 deg2=2;
 deg2Min=deg2-1;
 deg2Max=deg2+1;
 
-Fit1Range=[4:8]
+Fit1Range=[3:6]
 Fit2range=[1:6]
 
     D2=zeros(NumN+1,NumY, NumMasses);
@@ -202,7 +202,8 @@ end
 
 "-0."+Werte+"("+Fehler+")"
 
-%xi=1
-%plot(1./N, D2([1:NumN],xi,1), ".")
-%hold on
-%plot(0, D2(NumN+1, xi,1),".")
+%xi=4
+%plot(1./N, D2([1:NumN],xi,1), ".", "MarkerSize", 20)
+hold on
+%plot(0, D2(NumN+1, xi,1),".","MarkerSize", 20)
+hold off
