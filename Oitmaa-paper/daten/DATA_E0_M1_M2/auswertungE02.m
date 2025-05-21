@@ -5,7 +5,7 @@ D=importdata("mg_y_N_M1_E0_M2_Alles4.dat");
 
 
 NumN=8;
-NumY=38; %24
+NumY=42; %24
 NumMasses=6;
 
 Masses=["0" "0.125" "0.25" "0.5" "5" "10"]
@@ -27,12 +27,12 @@ deg=3;
 degMin=deg-1
 degMax=deg+1
 
-deg2=4;
-deg2Min=deg2-1;
-deg2Max=deg2+2;
+deg2=2;
+deg2Min=deg2%-1;
+deg2Max=deg2+1;
 
 Fit1Range=[3:8]
-Fit2range=[[1 25]; [1 25]; [1 25]; [1 25];[1 25];[1 25]]
+Fit2range=[[1 15]; [1 15]; [1 15]; [1 15];[1 15];[1 15]]
 
     D2=zeros(NumN+1,NumY, NumMasses);
     indices=[1:1:NumN];
