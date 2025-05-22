@@ -343,24 +343,18 @@ def Stringtension(mdurchg, alpha):
 
 def MassShift(N,y,l0):
     #iteriere ueber Massen
+    for xi in range(-20,10,2):
         #finde Grundzustand
-        mdurchg=-0.15
+        mdurchg=xi/100
         mu=2*mdurchg/y
         omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
         #print(omega0)
         #Berechne Ln
-        
-        
-        Fdurchg1=0
-        for n in range(int(np.floor(N/2)-5),int(np.floor(N/2)+5)):
-            a=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,n,l0),N)@omega0[1][:,0])
-            #print(a)
-            Fdurchg1=Fdurchg1+a
         Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(np.floor(N/2)-5),9),N)@omega0[1][:,0])
-        print(Fdurchg1, Fdurchg)
+        print(N,y,mdurchg, Fdurchg)
 
 
-MassShift(26,0.384,0.125)
+MassShift(24,0.4167,0.125)
 
 
 
