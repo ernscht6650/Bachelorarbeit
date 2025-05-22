@@ -16,8 +16,8 @@ sigmam=csr_matrix(np.array([[0,0],[1,0]]))
 def Herm (A):
     return np.conjugate(np.transpose(A))
 
-def Inter (n,M):
-    A=kron(sigmaz-eye_array(2),eye_array(2**(M-1)))
+def Inter (n,M,l):
+    A=kron(sigmaz-eye_array(2),eye_array(2**(M-1)))+2*eye_array(2**M)*l
    # print(0, "\n", A)
     for  k in range(2, n+1):
         xi=kron(eye_array(2**(k-1)), sigmaz+(-1)**k*eye_array(2))
@@ -28,10 +28,24 @@ def Inter (n,M):
     A=A@A/4
     return A;
 
-def WL (M):
-    A=Inter(1,M)
+def L_n(N,n,l=0):
+    A=kron(sigmaz-eye_array(2),eye_array(2**(N-1)))+eye_array(2**N)*l*2
+    for  k in range(2, n+1):
+        xi=kron(eye_array(2**(k-1)), sigmaz+(-1)**k*eye_array(2))
+        A+=kron(xi, eye_array(2**(N-k)))
+    return 0.5*A
+
+def WL(M,l=0):
+    A=Inter(1,M,l)
     for n in range(2,M):
-        A+=Inter(n,M)
+        A+=Inter(n,M,l)
+    return A
+
+def Foverg(M,l,n_start, xi):
+    A=L_n(M,n_start,l)
+    for i in range(1,xi+1):
+        tmp=kron(eye_array(2**(i-1)), sigmaz+(-1)**i*eye_array(2))
+        A+=(1-i/(xi+1))*kron(tmp, eye_array(2**(M-i)))
     return A
 
 def V (M):
@@ -177,7 +191,6 @@ def GrundzustandV2 (mdurchg):
             print(y, N, np.real(0.5*omegaprime[0]*y**2/N))
     print('\n')
 
-
 def Dispersion (N,x,mdurchg):
     K=15 #anzahl energien
     mu=2*mdurchg*np.sqrt(x)
@@ -242,7 +255,6 @@ def SkalarV2(mdurchg, begin):
             print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
     print("%")
 
-
 def Skalar(mdurchg):
     for Vol in range(20,26,5):
         for N in range(8, 25, 2):
@@ -268,7 +280,6 @@ def Skalar(mdurchg):
             print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
     print("%")
 
-
 def SkalarV2ren(mdurchg, begin):
     for eta in range(begin,1000,25):
         y=eta/1000
@@ -292,8 +303,6 @@ def SkalarV2ren(mdurchg, begin):
                 i=i+1 
 
             print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
-
-
 
 def Skalarren(mdurchg):
     for Vol in range(20,26,5):
@@ -320,22 +329,40 @@ def Skalarren(mdurchg):
             print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
     print("%")
 
+def Stringtension(mdurchg, alpha):
+    for eta in range(300,1000,25):
+        y=eta/1000
+        for N in range(10, 25, 2):
+            mu=2*mdurchg/y
+            if mu !=0:
+                omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+                omegaAlpha=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+            else:
+                omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N), k=1, which='SR', return_eigenvectors=False))
+                omegaAlpha=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha),N), k=1, which='SR', return_eigenvectors=False))
 
-SkalarV2ren(0,500)
-SkalarV2ren(0.125,500)
-SkalarV2ren(0.25,500)
-SkalarV2ren(0.5,500)
-SkalarV2ren(5,500)
-SkalarV2ren(10,500)
+            print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
 
-print(" ")
+def MassShift(N,y,l0):
+    #iteriere ueber Massen
+        #finde Grundzustand
+        mdurchg=-0.15
+        mu=2*mdurchg/y
+        omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
+        #print(omega0)
+        #Berechne Ln
+        
+        
+        Fdurchg1=0
+        for n in range(int(np.floor(N/2)-5),int(np.floor(N/2)+5)):
+            a=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,n,l0),N)@omega0[1][:,0])
+            #print(a)
+            Fdurchg1=Fdurchg1+a
+        Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(np.floor(N/2)-5),10),N)@omega0[1][:,0])
+        print(Fdurchg1, Fdurchg)
 
-Skalarren(0)
-Skalarren(0.125)
-Skalarren(0.25)
-Skalarren(0.5)
-Skalarren(5)
-Skalarren(10)
+
+MassShift(20,4.16,0.125)
 
 
 

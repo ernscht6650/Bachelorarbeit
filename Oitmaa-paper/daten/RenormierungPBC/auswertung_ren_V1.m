@@ -6,15 +6,15 @@ NumY=9
 NumMasses=6
 
 CurrMass=2
-Obs=6
+Obs=5
 deg=2
 
 Fitpoints=[3:9]
 
-limits=zeros(4,2,3);
-limits(:,:,1)=[[0.55 0.92]; [0.79 1.15]; [1.03 1.35]; [1.5 1.85]];
-limits(:,:,2)=[[-0.33 -0.2]; [-0.33 -0.18]; [-0.33 -0.15]; [-0.33 -0.1]];
-limits(:,:,3)=[[1.15 1.5]; [1.35 1.7]; [1.5 1.9]; [1.95 2.4]];
+limits=zeros(6,2,3);
+limits(:,:,1)=[[0.55 0.75]; [0.78 0.9]; [1.0 1.2]; [1.45 1.8]; [10 11]; [19.9 20.6]];
+limits(:,:,2)=[[-0.33 -0.2]; [-0.33 -0.18]; [-0.33 -0.15]; [-0.33 -0.1]; [-0.33 -0.1]; [-0.33 -0.1]];
+limits(:,:,3)=[[0.8 1.5]; [0.9 1.75]; [1.2 1.9]; [1.6 2.4]; [10 11]; [20 21]];
 
 xlims=[[0 1.4]; [0 1]; [0 1.5]]
 
@@ -59,7 +59,7 @@ legend("","", "20", "25", "interpreter", "latex","Location","southeast", "box", 
 end
 box on
 hold off
-%ylim(limits(CurrMass,:,Obs-3))
+ylim(limits(CurrMass,:,Obs-3))
 xlim(xlims(Obs-3,:))
 xlabel("y", "Interpreter", "latex")
 %ylabel(ylbl(Obs-3), "Interpreter","latex")
