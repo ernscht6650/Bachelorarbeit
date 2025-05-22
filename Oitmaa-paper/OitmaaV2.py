@@ -351,7 +351,7 @@ def MassShift(N,y,l0):
         #print(omega0)
         #Berechne Ln
         Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(np.floor(N/2)-5),9),N)@omega0[1][:,0])
-        print(N,y,mdurchg, Fdurchg)
+        print(N,y, l0, mdurchg, Fdurchg)
 
 
 MassShift(24,0.4167,0.125)
