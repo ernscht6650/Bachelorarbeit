@@ -43,9 +43,9 @@ def WL(M,l=0):
 
 def Foverg(M,l,n_start, xi):
     A=L_n(M,n_start,l)
-    for i in range(1,xi+1):
+    for i in range(n_start+1,n_start+xi+1):
         tmp=kron(eye_array(2**(i-1)), sigmaz+(-1)**i*eye_array(2))
-        A+=(1-i/(xi+1))*kron(tmp, eye_array(2**(M-i)))
+        A+=0.5*(1-(i-n_start)/(xi+1))*kron(tmp, eye_array(2**(M-i)))
     return A
 
 def V (M):
@@ -118,7 +118,6 @@ def Antidiag(N): #verschiebt Spins um einen Gitterplatz
         A[n,2**N-1-n]=1
     return csr_matrix(A)
 
-
 def SR (N):
    # A=sigmax
     #for i in range(2,N+1):
@@ -132,7 +131,6 @@ def SR2 (N):
         A=kron(A, eye_array(2))
 
     return A@Translation(N)
-
 
 def M1durchg (mdurchg):
     for Volume in range(5,26,5):
@@ -358,11 +356,11 @@ def MassShift(N,y,l0):
             a=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,n,l0),N)@omega0[1][:,0])
             #print(a)
             Fdurchg1=Fdurchg1+a
-        Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(np.floor(N/2)-5),10),N)@omega0[1][:,0])
+        Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(np.floor(N/2)-5),9),N)@omega0[1][:,0])
         print(Fdurchg1, Fdurchg)
 
 
-MassShift(20,4.16,0.125)
+MassShift(26,0.384,0.125)
 
 
 
