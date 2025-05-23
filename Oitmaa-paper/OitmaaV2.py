@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.sparse import *
+from multiprocessing import Process
 
 dense_matrix = np.array([[0, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 0]])
 
@@ -343,7 +344,7 @@ def Stringtension(mdurchg, alpha):
 
 def MassShift(N,y,l0,m0,stepsize=0.03):
     #iteriere ueber Massen
-    threshold=0.001
+    threshold=0.005
     Massen=[]
     Felder=[]
     Massen.append(m0) 
@@ -356,6 +357,7 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     
     n=0
     while np.sign(s*Felder[n]) < 0: 
+        #print(Massen[n], Felder[n])
         n=n+1
         Massen.append(m0+n*s)
         Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
@@ -367,18 +369,30 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
         i+=1
         Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n+i]))
 
-    for xi in range(0,n+i):
-        print(Massen[xi], Felder[xi])  
+    p=np.polyfit(Massen[n:n+i],Felder[n:n+i],2)
+    
+    MSoptions=[(-p[1]-np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0]),(-p[1]+np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0])] #NST des Polynoms
+    MS= MSoptions[np.argmin(MSoptions-Massen[n+i])] #Finde die, die naeher am letzten Wert liegt
+    #print(MSoptions, MS, "\n")
+    #for xi in range(0,n+i+1):
+    #    print(Massen[xi], Felder[xi])  
+    return -MS
 
 def Erwartungswert_Foverg(N,y,l0,mdurchg):      
     mu=2*mdurchg/y
     omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
-    Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(np.floor(N/2)-5),9),N)@omega0[1][:,0])
+    Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/3),2*int(N/6)-1),N)@omega0[1][:,0])
     return Fdurchg
     #print(N,y, l0, mdurchg, Fdurchg)
 
 
-MassShift(22,2.5,0.125,-0.1)
+
+def ComputeMassShift(etamin,etamax, l0):
+    for eta in range(etamin,etamax,5):
+        for N in range(16,28,2):  
+            y=eta/100
+            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.1))
+#MassShift(14,1.2,0.125,-0.35)
 
 
 
