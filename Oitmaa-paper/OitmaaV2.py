@@ -341,20 +341,44 @@ def Stringtension(mdurchg, alpha):
 
             print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
 
-def MassShift(N,y,l0):
+def MassShift(N,y,l0,m0,stepsize=0.03):
     #iteriere ueber Massen
-    for xi in range(-20,10,2):
-        #finde Grundzustand
-        mdurchg=xi/100
-        mu=2*mdurchg/y
-        omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
-        #print(omega0)
-        #Berechne Ln
-        Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(np.floor(N/2)-5),9),N)@omega0[1][:,0])
-        print(N,y,mdurchg, Fdurchg)
+    threshold=0.001
+    Massen=[]
+    Felder=[]
+    Massen.append(m0) 
+    Felder.append(Erwartungswert_Foverg(N,y,l0,m0))
+
+    if Felder[0]>0:
+        s=-stepsize
+    else:
+        s=stepsize
+    
+    n=0
+    while np.sign(s*Felder[n]) < 0: 
+        n=n+1
+        Massen.append(m0+n*s)
+        Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
+    i=0
+    while(np.abs(s)>threshold):
+        s=stepsize*2**(-(i+1))
+        direction=-np.sign(Felder[n+i])
+        Massen.append(Massen[n+i]+s*direction) 
+        i+=1
+        Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n+i]))
+
+    for xi in range(0,n+i):
+        print(Massen[xi], Felder[xi])  
+
+def Erwartungswert_Foverg(N,y,l0,mdurchg):      
+    mu=2*mdurchg/y
+    omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
+    Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(np.floor(N/2)-5),9),N)@omega0[1][:,0])
+    return Fdurchg
+    #print(N,y, l0, mdurchg, Fdurchg)
 
 
-MassShift(24,0.4167,0.125)
+MassShift(22,2.5,0.125,-0.1)
 
 
 
