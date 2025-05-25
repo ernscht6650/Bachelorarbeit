@@ -392,7 +392,7 @@ def ComputeMassShift(l0):
     for eta in range(50,100,5):
         for N in range(16,28,2):  
             y=eta/100
-            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.25))
+            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.25), , flush=True)
 
 #MassShift(14,1.2,0.01,-0.35)
 
