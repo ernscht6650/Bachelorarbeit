@@ -355,15 +355,22 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     else:
         s=stepsize
     
-    n=0
-    while np.sign(s*Felder[n]) < 0: 
-        #print(Massen[n], Felder[n])
+    n=1
+
+    Massen.append(m0+n*s)
+    Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
+
+    if np.sign(Felder[1]-Felder[0]) == np.sign(Felder[0]):
+        s=-s
+
+    while np.sign(Felder[n]) == np.sign(Felder[0]): 
+        print(Massen[n], Felder[n])
         n=n+1
         Massen.append(m0+n*s)
         Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
     i=0
     while(np.abs(s)>threshold):
-        #print(Massen[n+i], Felder[n+i])
+        print(Massen[n+i], Felder[n+i])
         s=stepsize*2**(-(i+1))
         direction=-np.sign(Felder[n+i])
         Massen.append(Massen[n+i]+s*direction) 
@@ -382,19 +389,24 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
 def Erwartungswert_Foverg(N,y,l0,mdurchg):      
     mu=2*mdurchg/y
     omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
-    Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/3),2*int(N/6)-1),N)@omega0[1][:,0])
+    Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N*5/12),2*int(N/12)-1),N)@omega0[1][:,0])
+    #sum=0
+    #for i in range(int(N/3), int(2*N/3)):
+    #    sum+=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,i,l0),N)@omega0[1][:,0])
+    
+    #    print(sum, np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,i,l0),N)@omega0[1][:,0]))
     return Fdurchg
     #print(N,y, l0, mdurchg, Fdurchg)
 
 
 
-def ComputeMassShift(l0):
-    for eta in range(50,100,5):
+def ComputeMassShift(etamin,etamax,l0):
+    for eta in range(50,101,5):
         for N in range(16,28,2):  
             y=eta/100
-            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.25), , flush=True)
+            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.25), flush=True)
 
-#MassShift(14,1.2,0.01,-0.35)
+MassShift(16,0.5,0.00001,-0.35, 0.3)
 
 
 
