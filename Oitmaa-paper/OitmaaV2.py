@@ -357,13 +357,13 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     
     n=0
     while np.sign(s*Felder[n]) < 0: 
-        print(Massen[n], Felder[n])
+        #print(Massen[n], Felder[n])
         n=n+1
         Massen.append(m0+n*s)
         Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
     i=0
     while(np.abs(s)>threshold):
-        print(Massen[n+i], Felder[n+i])
+        #print(Massen[n+i], Felder[n+i])
         s=stepsize*2**(-(i+1))
         direction=-np.sign(Felder[n+i])
         Massen.append(Massen[n+i]+s*direction) 
@@ -374,7 +374,7 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     
     MSoptions=[(-p[1]-np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0]),(-p[1]+np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0])] #NST des Polynoms
     MS= MSoptions[np.argmin(np.abs(MSoptions-Massen[n+i]))] #Finde die, die naeher am letzten Wert liegt
-    print(MSoptions, p, "\n")
+    #print(MSoptions, p, "\n")
     #for xi in range(0,n+i+1):
     #    print(Massen[xi], Felder[xi])  
     return -MS
@@ -388,13 +388,13 @@ def Erwartungswert_Foverg(N,y,l0,mdurchg):
 
 
 
-def ComputeMassShift(etamin,etamax, l0):
-    for eta in range(etamin,etamax,5):
+def ComputeMassShift(l0):
+    for eta in range(50,100,5):
         for N in range(16,28,2):  
             y=eta/100
-            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.1))
+            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.25), , flush=True)
 
-MassShift(14,1.2,0.01,-0.35)
+#MassShift(14,1.2,0.01,-0.35)
 
 
 
