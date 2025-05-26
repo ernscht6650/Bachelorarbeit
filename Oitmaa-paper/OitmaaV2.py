@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.sparse import *
 from multiprocessing import Process
+import ast
 
 dense_matrix = np.array([[0, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 0]])
 
@@ -12,6 +13,11 @@ sigmax=csr_matrix(np.array([[0,1],[1, 0]]))
 sigmaz=csr_matrix(np.array([[1,0],[0,-1]]))
 sigmap=csr_matrix(np.array([[0,1],[0,0]]))
 sigmam=csr_matrix(np.array([[0,0],[1,0]]))
+
+#Daten fuer Renormierung
+with open('dictionary.txt') as f:
+    data = f.read()
+dictVol = ast.literal_eval(data)
 
 #Terme des Hamiltonians
 def Herm (A):
@@ -363,7 +369,6 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
         Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
     i=0
     while(np.abs(s)>threshold):
-        #print(Massen[n+i], Felder[n+i])
         s=stepsize*2**(-(i+1))
         direction=-np.sign(Felder[n+i])
         Massen.append(Massen[n+i]+s*direction) 
@@ -374,10 +379,15 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     
     MSoptions=[(-p[1]-np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0]),(-p[1]+np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0])] #NST des Polynoms
     MS= MSoptions[np.argmin(np.abs(MSoptions-Massen[n+i]))] #Finde die, die naeher am letzten Wert liegt
-    #print(MSoptions, p, "\n")
+    #print(MSoptions, MS, "\n")
     #for xi in range(0,n+i+1):
     #    print(Massen[xi], Felder[xi])  
     return -MS
+
+def MassShiftVol(Vol, l0, m0, stepsize=0.5):
+    for N in range(10,28,2):
+        y=Vol/N
+        print("\""+str(Vol)+"_"+str(N)+"_"+str(l0)+"\":", MassShift(N,y,l0,m0,stepsize))
 
 def Erwartungswert_Foverg(N,y,l0,mdurchg):      
     mu=2*mdurchg/y
@@ -388,13 +398,18 @@ def Erwartungswert_Foverg(N,y,l0,mdurchg):
 
 
 
-def ComputeMassShift(l0):
-    for eta in range(50,100,5):
+def ComputeMassShift(etamin,etamax, l0):
+    for eta in range(etamin,etamax,5):
         for N in range(16,28,2):  
             y=eta/100
-            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.25), , flush=True)
+            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.2))
 
-#MassShift(14,1.2,0.01,-0.35)
+def RenormierungVol(Vol, N, l0):
+    #with open('dictionary.txt') as f:
+    #    data = f.read()
+    #dictVol = ast.literal_eval(data)
+    return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
-
+print(RenormierungVol(10,10,0.1))
+MassShiftVol(10, 0.1, -0.2)
 
