@@ -309,16 +309,16 @@ def SkalarV2ren(mdurchg, begin):
 
             print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
 
-def Skalarren(mdurchg):
+def Skalarren(mdurchg, l0):
     for Vol in range(20,26,5):
-        for N in range(8, 25, 2):
-            K=20
+        for N in range(10, 25, 2):
+            K=18
             y=Vol/N
-            mu=2*mdurchg/y-0.25
+            mu=2*mdurchg/y-RenormierungVol(Vol, N, l0)
             if mu !=0:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N, l0)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
             else:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N), k=K, which='SR', return_eigenvectors=True)
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N, l0),N), k=K, which='SR', return_eigenvectors=True)
             
             SRprime=NonZeroSpin_entferner(SR(N), N)
             Eprime=np.real(omegaprime[0])
@@ -411,5 +411,5 @@ def RenormierungVol(Vol, N, l0):
     return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
 print(RenormierungVol(10,10,0.1))
-MassShiftVol(10, 0.1, -0.2)
+MassShiftVol(10, 0.001, -0.2)
 
