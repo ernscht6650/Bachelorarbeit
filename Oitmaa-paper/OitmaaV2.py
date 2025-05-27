@@ -369,7 +369,7 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     Massen.append(m0) 
     Felder.append(Erwartungswert_Foverg(N,y,l0,m0))
 
-    if Felder[0]>0 and l0<0.5 or Felder[0]<0 and l0>0.5 :
+    if Felder[0]>0 and np.floor(l0)<0.5 or Felder[0]<0 and np.floor(l0)>0.5 :
         s=-stepsize
     else:
         s=stepsize
@@ -384,7 +384,7 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     i=0
     direction=np.sign(Massen[n]-Massen[n-1])
     while(np.abs(s)>threshold):
-        print(Massen[n+i], Felder[n+i])
+        #print(Massen[n+i], Felder[n+i])
 
         s=stepsize*2**(-(i+1))
 
@@ -399,7 +399,7 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     
     MSoptions=[(-p[1]-np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0]),(-p[1]+np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0])] #NST des Polynoms
     MS= MSoptions[np.argmin(np.abs(MSoptions-Massen[n+i]))] #Finde die, die naeher am letzten Wert liegt
-    print(p,MSoptions, MS, "\n")
+    #print(p,MSoptions, MS, "\n")
     #for xi in range(0,n+i+1):
     #    print(Massen[xi], Felder[xi])  
     return -MS
@@ -414,7 +414,8 @@ def Erwartungswert_Foverg(N,y,l0,mdurchg):
     omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
     #omega2=linalg.eigs(V(N)/(y**2)+WL(N)+mu*MassTerm(N)+100*S(N)@S(N), k=1, which='SR', return_eigenvectors=True)
 
-    Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/3),2*int(N/6)-1),N)@omega0[1][:,0])
+    #Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/3),2*int(N/6)-1),N)@omega0[1][:,0])
+    Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/2),1),N)@omega0[1][:,0])
     #Fdurchg2=np.real(Herm(omega2[1][:,0])@Foverg(N,l0,int(N/3),2*int(N/6)-1)@omega2[1][:,0])
     #Fdurchg2=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(F,N)@omega0[1][:,0])*1/(i+1)
     #print(Fdurchg, Fdurchg2)
@@ -441,8 +442,8 @@ def RenormierungVol(Vol, N, l0):
     #dictVol = ast.literal_eval(data)
     return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
-#for l10 in range(1,1000,2):
-#    print(l10/1000, MassShift(14,1,l10/1000, -0.2))
+#for l10 in range(1050,2000,2):
+#    print(l10/1000, MassShift(20,1,l10/1000, -0.6, 0.3))
 
 
 
