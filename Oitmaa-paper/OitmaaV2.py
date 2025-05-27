@@ -363,30 +363,34 @@ def Stringtension(mdurchg, alpha):
 
 def MassShift(N,y,l0,m0,stepsize=0.03):
     #iteriere ueber Massen
-    threshold=0.001
+    threshold=0.0001
     Massen=[]
     Felder=[]
     Massen.append(m0) 
     Felder.append(Erwartungswert_Foverg(N,y,l0,m0))
 
-    if Felder[0]>0:
+    if Felder[0]>0 and l0<0.5 or Felder[0]<0 and l0>0.5 :
         s=-stepsize
     else:
         s=stepsize
     
     n=0
-    while np.sign(s*Felder[n]) < 0: 
-        #print(Massen[n], Felder[n])
+    while np.sign(Felder[0]*Felder[n]) > 0: 
+        print(Massen[n], Felder[n])
         
         n=n+1
         Massen.append(m0+n*s)
         Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
     i=0
+    direction=np.sign(Massen[n]-Massen[n-1])
     while(np.abs(s)>threshold):
-        #print(Massen[n+i], Felder[n+i])
+        print(Massen[n+i], Felder[n+i])
 
         s=stepsize*2**(-(i+1))
-        direction=-np.sign(Felder[n+i])
+
+        if np.sign(Felder[n+i]*Felder[n+i-1])<0:
+            direction=-direction
+
         Massen.append(Massen[n+i]+s*direction) 
         i+=1
         Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n+i]))
@@ -395,7 +399,7 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     
     MSoptions=[(-p[1]-np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0]),(-p[1]+np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0])] #NST des Polynoms
     MS= MSoptions[np.argmin(np.abs(MSoptions-Massen[n+i]))] #Finde die, die naeher am letzten Wert liegt
-    #print(p,MSoptions, MS, "\n")
+    print(p,MSoptions, MS, "\n")
     #for xi in range(0,n+i+1):
     #    print(Massen[xi], Felder[xi])  
     return -MS
@@ -403,11 +407,11 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
 def MassShiftVol(Vol, l0, m0, stepsize=0.5):
     for N in range(10,28,2):
         y=Vol/N
-        print("\""+str(Vol)+"_"+str(N)+"_"+str(l0)+"\":", MassShift(N,y,l0,m0,stepsize), ",")
+        print("\""+str(Vol)+"_"+str(N)+"_"+str(l0)+"\":", MassShift(N,y,l0,m0,stepsize), ",", flush=True)
 
 def Erwartungswert_Foverg(N,y,l0,mdurchg):      
     mu=2*mdurchg/y
-    omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
+    omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
     #omega2=linalg.eigs(V(N)/(y**2)+WL(N)+mu*MassTerm(N)+100*S(N)@S(N), k=1, which='SR', return_eigenvectors=True)
 
     Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/3),2*int(N/6)-1),N)@omega0[1][:,0])
@@ -419,7 +423,7 @@ def Erwartungswert_Foverg(N,y,l0,mdurchg):
 
 def EwLadung(N,y,l0,mdurchg):
     mu=2*mdurchg/y
-    omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
+    omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
     for k in range(1, N+1):
         print(k, np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Q_n(N,k),N)@omega0[1][:,0]), np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0]))    
 
@@ -429,7 +433,7 @@ def ComputeMassShift(etamin,etamax, l0):
     for eta in range(etamin,etamax,5):
         for N in range(16,28,2):  
             y=eta/100
-            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.2))
+            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.2), "flush=True")
 
 def RenormierungVol(Vol, N, l0):
     #with open('dictionary.txt') as f:
@@ -437,7 +441,9 @@ def RenormierungVol(Vol, N, l0):
     #dictVol = ast.literal_eval(data)
     return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
-#print(RenormierungVol(10,10,0.1))
+#for l10 in range(1,1000,2):
+#    print(l10/1000, MassShift(14,1,l10/1000, -0.2))
+
 
 
 
