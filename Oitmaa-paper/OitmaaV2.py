@@ -153,63 +153,6 @@ def SR2 (N):
 
     return A@Translation(N)
 
-def M1durchg (mdurchg):
-    for Volume in range(5,26,5):
-        for N in range(4, 26, 2):
-            y=Volume/N
-            mu=2*mdurchg/y
-            Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N)
-            #  omega=linalg.eigs(W, k=2, which='SR', return_eigenvectors=False)
-            omegaprime=linalg.eigs(Wprime, k=2, which='SR', return_eigenvectors=False)
-
-            #print(np.real(omega), np.real(omegaprime), "\n\n")
-            print(Volume, y, np.real(omegaprime[1]/(2*N)*y**2), np.real(-0.5*(omegaprime[1]-omegaprime[0])*y))
-    print('%\n')
-
-def M1durchgV2 (mdurchg):
-    for eta in range(30,150,5):
-        y=eta/100
-        for N in range(4, 25, 2):
-            mu=2*mdurchg/y
-            if mu !=0:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=2, which='SR', return_eigenvectors=False)
-            else:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N), k=2, which='SR', return_eigenvectors=False)
-            print(y, N, np.real(-0.5*(omegaprime[1]-omegaprime[0])*y), np.real(0.5*omegaprime[0]*y**2/N))
-    print('%\n')
-
-def Grundzustand (mdurchg):
-    for Volume in range(5,21,5):
-        for N in range(4, 25, 2):
-            y=Volume/N
-            mu=2*mdurchg/y
-
-            #W=V(N)/(y**2)+WL(N)
-            Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N)
-            #  omega=linalg.eigs(W, k=2, which='SR', return_eigenvectors=False)
-            omegaprime=linalg.eigs(Wprime, k=1, which='SR', return_eigenvectors=False)
-
-            #print(np.real(omega), np.real(omegaprime), "\n\n")
-            print(Volume, y, np.real(0.5*omegaprime[0]*y**2/N))
-    print('\n')
-
-def GrundzustandV2 (mdurchg):
-    for eta in range(2,11,2):
-        y=eta/10
-        for N in range(4, 25, 2):
-            mu=2*mdurchg/y
-            #W=V(N)/(y**2)+WL(N)
-            if mu !=0:
-                Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N)
-            else:
-                Wprime=NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N)
-            #  omega=linalg.eigs(W, k=2, which='SR', return_eigenvectors=False)
-            omegaprime=linalg.eigs(Wprime, k=1, which='SR', return_eigenvectors=False)
-
-            #print(np.real(omega), np.real(omegaprime), "\n\n")
-            print(y, N, np.real(0.5*omegaprime[0]*y**2/N))
-    print('\n')
-
 def Dispersion (N,x,mdurchg):
     K=15 #anzahl energien
     mu=2*mdurchg*np.sqrt(x)
@@ -299,16 +242,16 @@ def Skalar(mdurchg):
             print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
     print("%")
 
-def SkalarV2ren(mdurchg, begin):
+def SkalarV2ren(mdurchg,l0, begin):
     for eta in range(begin,1000,25):
         y=eta/1000
         for N in range(10, 25, 2):
             K=18
-            mu=2*mdurchg/y-0.25
+            mu=2*mdurchg/y-2*Renormierung(N,y,l0)/y
             if mu !=0:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
             else:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N), k=K, which='SR', return_eigenvectors=True)
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0),N), k=K, which='SR', return_eigenvectors=True)
             
             SRprime=NonZeroSpin_entferner(SR(N), N)
             Eprime=np.real(omegaprime[0])
@@ -415,12 +358,18 @@ def MassShift(N,y,l0,m0,stepsize=0.05):
     return -MS
    
 
-
-def MassShiftVol(Vol, l0, stepsize=0.3):
-	for N in range(10,28,2):
-		y=Vol/N
-		m0=-0.125*y
-		print("\""+str(Vol)+"_"+str(N)+"_"+str(l0)+"\":", MassShift(N,y,l0,m0,stepsize), ",", flush=True)
+@synchronized
+def MassShiftVol(Vol, l0, Nmax=24, Nmin=10, stepsize=0.3):
+	ys=[]
+	Ns=[]
+	MSs=[]
+	for N in range(Nmin, Nmax+1,2):
+		ys.append(Vol/N)
+		m0=-0.1*Vol/N
+		Ns.append(N)
+		MSs.append(MassShift(N,Vol/N,l0,m0, stepsize))
+	for i in range(0, len(ys)):
+		print("\""+str(Vol)+"_"+str(Ns[i])+"_"+str(l0)+"\":", MSs[i], ",", flush=True)
 
 def Erwartungswert_Foverg(N,y,l0,mdurchg):      
     mu=2*mdurchg/y
@@ -479,6 +428,9 @@ def RenormierungVol(Vol, N, l0):
     #dictVol = ast.literal_eval(data)
     return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
+def Renormierung(N,y,l0):
+	return dict[str(N)+"_"+str(y)+"_"+str(l0)]
+	
 #for l10 in range(1050,2000,2):
 #    print(l10/1000, MassShift(20,1,l10/1000, -0.6, 0.3))
 
