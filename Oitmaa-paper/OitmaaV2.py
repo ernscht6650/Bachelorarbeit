@@ -1,3 +1,4 @@
+from deco import concurrent, synchronized
 import numpy as np
 from scipy.sparse import *
 from multiprocessing import Process
@@ -323,8 +324,8 @@ def SkalarV2ren(mdurchg, begin):
             print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
 
 def Skalarren(mdurchg, l0):
-    for Vol in range(20,26,5):
-        for N in range(10, 25, 2):
+    for Vol in range(15,26,5):
+        for N in range(10, 27, 2):
             K=18
             y=Vol/N
             mu=2*mdurchg/y-2*RenormierungVol(Vol, N, l0)/y
@@ -344,7 +345,7 @@ def Skalarren(mdurchg, l0):
                     scalar=i
                 i=i+1 
             
-            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
+            print(mdurchg, l0, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar, flush=True)
     print("%")
 
 def Stringtension(mdurchg, alpha):
@@ -361,22 +362,30 @@ def Stringtension(mdurchg, alpha):
 
             print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
 
-def MassShift(N,y,l0,m0,stepsize=0.03):
+@concurrent
+def MassShift(N,y,l0,m0,stepsize=0.05):
     #iteriere ueber Massen
-    threshold=0.0001
+    threshold=0.0015
     Massen=[]
     Felder=[]
     Massen.append(m0) 
     Felder.append(Erwartungswert_Foverg(N,y,l0,m0))
 
-    if Felder[0]>0 and np.floor(l0)<0.5 or Felder[0]<0 and np.floor(l0)>0.5 :
+    if Felder[0]>0: #and np.floor(l0)<0.5 or Felder[0]<0 and np.floor(l0)>0.5 :
         s=-stepsize
     else:
         s=stepsize
+
     
-    n=0
+    n=1
+
+    Massen.append(m0+n*s)
+    Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
+    
+    if np.sign(Felder[0]*Felder[1]) > 0 and np.abs(Felder[1])>np.abs(Felder[0]):
+        s=-s
     while np.sign(Felder[0]*Felder[n]) > 0: 
-        print(Massen[n], Felder[n])
+        #print(Massen[n], Felder[n])
         
         n=n+1
         Massen.append(m0+n*s)
@@ -402,12 +411,16 @@ def MassShift(N,y,l0,m0,stepsize=0.03):
     #print(p,MSoptions, MS, "\n")
     #for xi in range(0,n+i+1):
     #    print(Massen[xi], Felder[xi])  
+    
     return -MS
+   
 
-def MassShiftVol(Vol, l0, m0, stepsize=0.5):
-    for N in range(10,28,2):
-        y=Vol/N
-        print("\""+str(Vol)+"_"+str(N)+"_"+str(l0)+"\":", MassShift(N,y,l0,m0,stepsize), ",", flush=True)
+
+def MassShiftVol(Vol, l0, stepsize=0.3):
+	for N in range(10,28,2):
+		y=Vol/N
+		m0=-0.125*y
+		print("\""+str(Vol)+"_"+str(N)+"_"+str(l0)+"\":", MassShift(N,y,l0,m0,stepsize), ",", flush=True)
 
 def Erwartungswert_Foverg(N,y,l0,mdurchg):      
     mu=2*mdurchg/y
@@ -429,12 +442,36 @@ def EwLadung(N,y,l0,mdurchg):
         print(k, np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Q_n(N,k),N)@omega0[1][:,0]), np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0]))    
 
 
+@synchronized
+def ComputeMassShift(l0):
+	ys=[]
+	Ns=[]
+	MSs=[]
+	for eta in range(50,121,10):
+		for N in range(10,25,2):  
+			ys.append(eta/100)
+			m0=-0.125*eta/100
+			MSs.append(MassShift(N,eta/100,l0,m0,0.2))
+			Ns.append(N)
+	for i in range(0,len(ys)):
+		print("\""+str(Ns[i])+"_"+str(ys[i])+"_"+str(l0)+"\":", MSs[i], ",", flush=True)
 
-def ComputeMassShift(etamin,etamax, l0):
-    for eta in range(etamin,etamax,5):
-        for N in range(16,28,2):  
-            y=eta/100
-            print(N, y, l0, MassShift(N,y,l0,-0.2, 0.2), "flush=True")
+@synchronized
+def ComputeMassShift_Abh_l(N,y):
+	ls=[]
+	MSs=[]
+	for L in range(50,950,50):
+			l=L/1000  
+			if l<0.56 and l>0.45 or l> 0.96 or l<0.05:
+				m0=0.2*y
+				MSs.append(MassShift(N,y,l,m0,0.03))
+			else:
+				m0=-0.125*y
+				MSs.append(MassShift(N,y,l,m0,0.15))
+			ls.append(l)
+	for i in range(0,len(ls)):
+		print(ls[i], MSs[i], flush=True)
+
 
 def RenormierungVol(Vol, N, l0):
     #with open('dictionary.txt') as f:
@@ -446,7 +483,8 @@ def RenormierungVol(Vol, N, l0):
 #    print(l10/1000, MassShift(20,1,l10/1000, -0.6, 0.3))
 
 
-
+#for l in range(5,100,10):
+#	print(l/100, MassShift(22, 1.5, l/100, -0.2, 0.1), flush=True)
 
 
 
