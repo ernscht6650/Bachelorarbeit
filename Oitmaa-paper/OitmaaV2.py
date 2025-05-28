@@ -218,8 +218,9 @@ def SkalarV2(mdurchg,l0):
                     scalar=i
                 i=i+1 
 
-            print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
-    print("%")
+            return [np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y)]
+            #print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
+    #print("%")
 
 def Skalar(mdurchg,l0):
     for Vol in range(20,26,5):
@@ -247,10 +248,17 @@ def Skalar(mdurchg,l0):
     print("%")
 
 def SkalarV2ren(mdurchg,l0):
+    ys=[]
+    Ns=[]
+    Es=[]
     for eta in range(500,1201,100):
         y=eta/1000
         for N in range(10, 27, 2):
-            SkalarV2(mdurchg-Renormierung(N,y,l0), l0)
+            ys.append(N)
+            Ns.append(N)
+            Es.append(SkalarV2(mdurchg-Renormierung(N,y,l0), l0))
+    for i in range(0,len(ys)):
+        print(mdurchg,ys[i], Ns[i], Es[i][0], Es[i][1], Es[i][2] , l0, flush=True)
         
 
 def Skalarren(mdurchg, l0):
