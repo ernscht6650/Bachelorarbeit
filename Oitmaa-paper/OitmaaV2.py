@@ -196,6 +196,7 @@ def Phase (N,x,mdurchg):
     for i in range(0,K):
         print(Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i])) # Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
 
+@concurrent
 def SkalarV2(mdurchg,l0):
     for eta in range(500,1200,100):
         y=eta/1000
@@ -247,14 +248,15 @@ def Skalar(mdurchg,l0):
             print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
     print("%")
 
+@synchronized
 def SkalarV2ren(mdurchg,l0):
     ys=[]
     Ns=[]
     Es=[]
-    for eta in range(500,1201,100):
+    for eta in range(500,600,100):
         y=eta/1000
-        for N in range(10, 27, 2):
-            ys.append(N)
+        for N in range(10, 20, 2):
+            ys.append(y)
             Ns.append(N)
             Es.append(SkalarV2(mdurchg-Renormierung(N,y,l0), l0))
     for i in range(0,len(ys)):
@@ -353,7 +355,7 @@ def MassShift(N,y,l0,m0,stepsize=0.05):
     return -MS
    
 
-@synchronized
+#@synchronized
 def MassShiftVol(Vol, l0, Nmax=24, Nmin=10, stepsize=0.3):
 	ys=[]
 	Ns=[]
@@ -387,12 +389,12 @@ def EwLadung(N,y,l0,mdurchg):
 
 
 @synchronized
-def ComputeMassShift(l0):
+def ComputeMassShift(l0, Nmin=10, Nmax=26):
 	ys=[]
 	Ns=[]
 	MSs=[]
-	for eta in range(50,121,10):
-		for N in range(10,25,2):  
+	for eta in range(30,50,10):
+		for N in range(Nmin,Nmax+1,2):  
 			ys.append(eta/100)
 			m0=-0.125*eta/100
 			MSs.append(MassShift(N,eta/100,l0,m0,0.2))
@@ -400,7 +402,7 @@ def ComputeMassShift(l0):
 	for i in range(0,len(ys)):
 		print("\""+str(Ns[i])+"_"+str(ys[i])+"_"+str(l0)+"\":", MSs[i], ",", flush=True)
 
-@synchronized
+#@synchronized
 def ComputeMassShift_Abh_l(N,y):
 	ls=[]
 	MSs=[]
