@@ -160,13 +160,9 @@ def SR2 (N):
 def Dispersion (N,x,mdurchg):
     K=15 #anzahl energien
     mu=2*mdurchg*np.sqrt(x)
-
-    #Hprime=NonZeroSpin_entferner(V(N)*x+WL(N)+mu*MassTerm(N),N)
-     
     omega=linalg.eigs(V(N)*x+WL(N)+mu*MassTerm(N)+4*S(N)@S(N), k=K, which='SR', return_eigenvectors=True)
     omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)*x+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
 
-    #Op2=-Op(N,x)@Op(N,x)
     Op2_prime=NonZeroSpin_entferner(-Op(N,x)@Op(N,x),N)
     SRprime=NonZeroSpin_entferner(SR(N), N)
     #SR2prime=NonZeroSpin_entferner(SR2(N), N)
@@ -175,28 +171,18 @@ def Dispersion (N,x,mdurchg):
     Eprime=np.real(omegaprime[0])
     #E=np.real(omega[0])
     for i in range(0,K):
-        #print(E[i],np.real(Herm(omega[1][:,i])@Op2@omega[1][:,i]) , Herm(omega[1][:,i])@Sr@omega[1][:,i], Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i]), Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
-        #print(Eprime[i], E[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i]), np.real(Herm(omega[1][:,i])@Op2@omega[1][:,i]), Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i], Herm(omega[1][:,i])@SR(N)@omega[1][:,i]) 
         print(Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i]), np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])) 
 
 def Phase (N,x,mdurchg):
     K=20 #anzahl energien
     mu=2*mdurchg*np.sqrt(x)
-
     omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)*x+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
-
     SRprime=NonZeroSpin_entferner(SR(N), N)
-
-   # phase=omega[1].getH()@Sr@omega[1]
-    #phase_prime=omegaprime[1].getH()@SRprime@omegaprime[1]
-
-    #E=np.real(omega[0])
     Eprime=np.real(omegaprime[0])
 
     for i in range(0,K):
         print(Eprime[i], np.real(Herm(omegaprime[1][:,i])@Op2_prime@omegaprime[1][:,i])) # Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
 
-@concurrent
 def SkalarV2(mdurchg,l0):
     for eta in range(500,1200,100):
         y=eta/1000
@@ -223,42 +209,34 @@ def SkalarV2(mdurchg,l0):
             #print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
     #print("%")
 
-def Skalar(mdurchg,l0):
-    for Vol in range(20,26,5):
-        for N in range(8, 25, 2):
-            K=20
-            y=Vol/N
-            mu=2*mdurchg/y
-            if mu !=0:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
-            else:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N), k=K, which='SR', return_eigenvectors=True)
-            
-            SRprime=NonZeroSpin_entferner(SR(N), N)
-            Eprime=np.real(omegaprime[0])
-
-            scalar=0
-            i=2
-            while scalar==0:
-                #print(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
-                if np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])>0:
-                    scalar=i
-                i=i+1 
-            
-            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
-    print("%")
+@concurrent
+def Skalar(mdurchg, N, y, l0):
+    K=20
+    y=Vol/N
+    mu=2*mdurchg/y
+    omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
+    SRprime=NonZeroSpin_entferner(SR(N), N)
+    Eprime=np.real(omegaprime[0])
+    scalar=0
+    i=2
+    while scalar==0:
+        if np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])>0:
+            scalar=i
+        i=i+1 
+    return [np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y)]   
+    #print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
 
 @synchronized
 def SkalarV2ren(mdurchg,l0):
     ys=[]
     Ns=[]
     Es=[]
-    for eta in range(500,600,100):
+    for eta in range(500,1201,100):
         y=eta/1000
-        for N in range(10, 20, 2):
-            ys.append(y)
+        for N in range(10, 27, 2):
+            ys.append(N)
             Ns.append(N)
-            Es.append(SkalarV2(mdurchg-Renormierung(N,y,l0), l0))
+            Es.append(Skalar(mdurchg-Renormierung(N,y,l0),N,y, l0))
     for i in range(0,len(ys)):
         print(mdurchg,ys[i], Ns[i], Es[i][0], Es[i][1], Es[i][2] , l0, flush=True)
         
@@ -293,13 +271,8 @@ def Stringtension(mdurchg, alpha):
         y=eta/1000
         for N in range(10, 25, 2):
             mu=2*mdurchg/y
-            if mu !=0:
-                omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
-                omegaAlpha=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
-            else:
-                omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N),N), k=1, which='SR', return_eigenvectors=False))
-                omegaAlpha=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha),N), k=1, which='SR', return_eigenvectors=False))
-
+            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+            omegaAlpha=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
             print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
 
 @concurrent
@@ -315,10 +288,7 @@ def MassShift(N,y,l0,m0,stepsize=0.05):
         s=-stepsize
     else:
         s=stepsize
-
-    
     n=1
-
     Massen.append(m0+n*s)
     Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
     
@@ -349,13 +319,10 @@ def MassShift(N,y,l0,m0,stepsize=0.05):
     MSoptions=[(-p[1]-np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0]),(-p[1]+np.sqrt(p[1]**2-4*p[2]*p[0]))/(2*p[0])] #NST des Polynoms
     MS= MSoptions[np.argmin(np.abs(MSoptions-Massen[n+i]))] #Finde die, die naeher am letzten Wert liegt
     #print(p,MSoptions, MS, "\n")
-    #for xi in range(0,n+i+1):
-    #    print(Massen[xi], Felder[xi])  
-    
     return -MS
    
 
-#@synchronized
+@synchronized
 def MassShiftVol(Vol, l0, Nmax=24, Nmin=10, stepsize=0.3):
 	ys=[]
 	Ns=[]
@@ -371,15 +338,9 @@ def MassShiftVol(Vol, l0, Nmax=24, Nmin=10, stepsize=0.3):
 def Erwartungswert_Foverg(N,y,l0,mdurchg):      
     mu=2*mdurchg/y
     omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
-    #omega2=linalg.eigs(V(N)/(y**2)+WL(N)+mu*MassTerm(N)+100*S(N)@S(N), k=1, which='SR', return_eigenvectors=True)
-
-    #Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/3),2*int(N/6)-1),N)@omega0[1][:,0])
     Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/2),1),N)@omega0[1][:,0])
-    #Fdurchg2=np.real(Herm(omega2[1][:,0])@Foverg(N,l0,int(N/3),2*int(N/6)-1)@omega2[1][:,0])
-    #Fdurchg2=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(F,N)@omega0[1][:,0])*1/(i+1)
-    #print(Fdurchg, Fdurchg2)
     return Fdurchg
-    #print(N,y, l0, mdurchg, Fdurchg)
+    
 
 def EwLadung(N,y,l0,mdurchg):
     mu=2*mdurchg/y
@@ -389,12 +350,12 @@ def EwLadung(N,y,l0,mdurchg):
 
 
 @synchronized
-def ComputeMassShift(l0, Nmin=10, Nmax=26):
+def ComputeMassShift(l0):
 	ys=[]
 	Ns=[]
 	MSs=[]
-	for eta in range(30,50,10):
-		for N in range(Nmin,Nmax+1,2):  
+	for eta in range(50,121,10):
+		for N in range(10,25,2):  
 			ys.append(eta/100)
 			m0=-0.125*eta/100
 			MSs.append(MassShift(N,eta/100,l0,m0,0.2))
@@ -402,7 +363,7 @@ def ComputeMassShift(l0, Nmin=10, Nmax=26):
 	for i in range(0,len(ys)):
 		print("\""+str(Ns[i])+"_"+str(ys[i])+"_"+str(l0)+"\":", MSs[i], ",", flush=True)
 
-#@synchronized
+@synchronized
 def ComputeMassShift_Abh_l(N,y):
 	ls=[]
 	MSs=[]
@@ -420,9 +381,6 @@ def ComputeMassShift_Abh_l(N,y):
 
 
 def RenormierungVol(Vol, N, l0):
-    #with open('dictionary.txt') as f:
-    #    data = f.read()
-    #dictVol = ast.literal_eval(data)
     return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
 def Renormierung(N,y,l0):
