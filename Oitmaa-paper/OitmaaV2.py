@@ -266,19 +266,19 @@ def SkalarVolren(Vol,mdurchg,l0):
         
 
 def Skalarren(Vol, mdurchg, l0):
-        for N in range(28, 29, 2):
-            K=2
+        for N in range(10, 27, 2):
+            K=15
             y=Vol/N
             mu=2*mdurchg/y-2*RenormierungVol(Vol, N, l0)/y
             if mu !=0:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N, l0)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=False)
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N, l0)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
             else:
                 omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N, l0),N), k=K, which='SR', return_eigenvectors=True)
             
             #SRprime=NonZeroSpin_entferner(SR(N), N)
             Eprime=np.real(omegaprime[0])
             x=1/(y*y)
-            #Op2_prime=NonZeroSpin_entferner(-Op(N,x)@Op(N,x),N)
+            Op2_prime=NonZeroSpin_entferner(-Op(N,x)@Op(N,x),N)
             scalar=0
             #i=2
             #while scalar==0:
@@ -286,22 +286,22 @@ def Skalarren(Vol, mdurchg, l0):
                 #if np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])>0:
                     #scalar=i
                 #i=i+1 
-            #P=[] 
+            P=[] 
             scalar2=0
-            #for j in range(0,K):
-                #if scalar2==0:
-                    #P.append(np.real(Herm(omegaprime[1][:,j])@Op2_prime@omegaprime[1][:,j]))
-                #if scalar2==0:
-                    #if j>2 and  P[j] < P[2] and scalar2==0:
-                        #scalar2=j
+            for j in range(0,K):
+                if scalar2==0:
+                    P.append(np.real(Herm(omegaprime[1][:,j])@Op2_prime@omegaprime[1][:,j]))
+                if scalar2==0:
+                    if j>2 and  P[j] < P[2] and scalar2==0:
+                        scalar2=j
             #print(P)
-            #print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
-            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
+            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
+            #print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
 
 @synchronized
 def ComputeStringtension(mdurchg, alpha):
     Sts=[[0]*5]*8*8
-    for eta in range(300,1000,100):
+    for eta in range(300,1001,100):
         for N in range(10, 25, 2):
             Sts[int((N-10)/2+8*(eta-300)/100)]=Stringtension(N,eta/1000,mdurchg, alpha)
           
@@ -392,12 +392,12 @@ def EwLadung(N,y,l0,mdurchg):
         print(k, np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Q_n(N,k),N)@omega0[1][:,0]), np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0]))    
 
 
-#@synchronized
+@synchronized
 def ComputeMassShift(l0):
 	ys=[]
 	Ns=[]
 	MSs=[]
-	for eta in range(30,50,10):
+	for eta in range(50,101,10):
 		for N in range(10,25,2):  
 			ys.append(eta/100)
 			m0=-0.125*eta/100
@@ -410,7 +410,7 @@ def ComputeMassShift(l0):
 def ComputeMassShift_Abh_l(N,y):
 	ls=[]
 	MSs=[]
-	for L in range(10,496,10):
+	for L in range(10,496,20):
 			l=L/1000  
 			m0=-0.13*y
 			MSs.append(MassShift(N,y,l,m0,0.15))
