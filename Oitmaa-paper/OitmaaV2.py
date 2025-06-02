@@ -314,12 +314,21 @@ def ComputeStringtension(mdurchg, alpha):
 def ComputeStringtensionVol(Vol,mdurchg, alpha):
     Sts=[[0]*5]*9
     for N in range(10, 26, 2):
-        Sts[int(N-10)/2]=Stringtension(N,Vol/N,mdurchg, alpha)
+        Sts[int(N-10)/2]=StringtensionVol(N,Vol,mdurchg, alpha)
           
        
   
     for i in range(0, len(Sts)):
          print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
+
+@concurrent      
+def StringtensionVol(N,Vol,mdurchg,alpha):
+            y=Vol/N
+            mu=2*(mdurchg-RenormierungVol(Vol,N,alpha))/y
+            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+            omegaAlpha=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+            #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
+            return [y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N]
 
 @concurrent      
 def Stringtension(N,y,mdurchg,alpha):
