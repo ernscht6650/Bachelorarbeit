@@ -310,6 +310,17 @@ def ComputeStringtension(mdurchg, alpha):
     for i in range(0, len(Sts)):
          print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
 
+@synchronized
+def ComputeStringtensionVol(Vol,mdurchg, alpha):
+    Sts=[[0]*5]*9
+    for N in range(10, 26, 2):
+        Sts[int(N-10)/2]=Stringtension(N,Vol/N,mdurchg, alpha)
+          
+       
+  
+    for i in range(0, len(Sts)):
+         print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
+
 @concurrent      
 def Stringtension(N,y,mdurchg,alpha):
             mu=2*(mdurchg-Renormierung(N,y,alpha))/y
