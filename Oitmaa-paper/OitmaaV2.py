@@ -209,7 +209,7 @@ def SkalarV2(mdurchg,l0):
             #print(mdurchg, y, N, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
     #print("%")
 
-@concurrent
+#@concurrent
 def Skalar(mdurchg, N, y, l0):
     K=20
     mu=2*mdurchg/y
@@ -235,7 +235,7 @@ def Skalar(mdurchg, N, y, l0):
     return [np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y)]   
     #print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), scalar)
 
-@synchronized
+#@synchronized
 def SkalarV2ren(mdurchg,l0):
     ys=[]
     Ns=[]
@@ -248,47 +248,75 @@ def SkalarV2ren(mdurchg,l0):
             Es.append(Skalar(mdurchg-Renormierung(N,y,l0),N,y, l0))
     for i in range(0,len(ys)):
         print(mdurchg,ys[i], Ns[i], Es[i][0], Es[i][1], Es[i][2], Es[i][3] , l0, flush=True)
+
+#@synchronized
+def SkalarVolren(Vol,mdurchg,l0):
+    ys=[]
+    Ns=[]
+    Es=[]
+    for N in range(10, 29, 2):
+            y=Vol/N
+            ys.append(y)
+            Ns.append(N)
+            Es.append(Skalar(mdurchg-RenormierungVol(Vol,N,l0),N,y, l0))
+    for i in range(0,len(ys)):
+        print(mdurchg,Vol, ys[i], Es[i][0], Es[i][1], Es[i][2], Es[i][3] , l0, Ns[i], flush=True)
+        
+
         
 
 def Skalarren(Vol, mdurchg, l0):
-        for N in range(10, 27, 2):
-            K=18
+        for N in range(28, 29, 2):
+            K=2
             y=Vol/N
             mu=2*mdurchg/y-2*RenormierungVol(Vol, N, l0)/y
             if mu !=0:
-                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N, l0)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
+                omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N, l0)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=False)
             else:
                 omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N, l0),N), k=K, which='SR', return_eigenvectors=True)
             
-            SRprime=NonZeroSpin_entferner(SR(N), N)
+            #SRprime=NonZeroSpin_entferner(SR(N), N)
             Eprime=np.real(omegaprime[0])
             x=1/(y*y)
-            Op2_prime=NonZeroSpin_entferner(-Op(N,x)@Op(N,x),N)
+            #Op2_prime=NonZeroSpin_entferner(-Op(N,x)@Op(N,x),N)
             scalar=0
-            i=2
-            while scalar==0:
+            #i=2
+            #while scalar==0:
                 #print(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])
-                if np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])>0:
-                    scalar=i
-                i=i+1 
-            P=[] 
+                #if np.real(Herm(omegaprime[1][:,i])@SRprime@omegaprime[1][:,i])>0:
+                    #scalar=i
+                #i=i+1 
+            #P=[] 
             scalar2=0
-            for j in range(0,K):
-                if scalar2==0:
-                    P.append(np.real(Herm(omegaprime[1][:,j])@Op2_prime@omegaprime[1][:,j]))
-                if j>2 and  P[j] < P[2] and scalar2==0:
-                    scalar2=j
+            #for j in range(0,K):
+                #if scalar2==0:
+                    #P.append(np.real(Herm(omegaprime[1][:,j])@Op2_prime@omegaprime[1][:,j]))
+                #if scalar2==0:
+                    #if j>2 and  P[j] < P[2] and scalar2==0:
+                        #scalar2=j
             #print(P)
-            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
+            #print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
+            print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
 
-def Stringtension(mdurchg, alpha):
-    for eta in range(300,1000,25):
-        y=eta/1000
+@synchronized
+def ComputeStringtension(mdurchg, alpha):
+    Sts=[[0]*5]*8*8
+    for eta in range(300,1000,100):
         for N in range(10, 25, 2):
-            mu=2*mdurchg/y
+            Sts[int((N-10)/2+8*(eta-300)/100)]=Stringtension(N,eta/1000,mdurchg, alpha)
+          
+       
+  
+    for i in range(0, len(Sts)):
+         print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
+
+@concurrent      
+def Stringtension(N,y,mdurchg,alpha):
+            mu=2*(mdurchg-Renormierung(N,y,alpha))/y
             omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
             omegaAlpha=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
-            print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
+            #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
+            return [y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N]
 
 @concurrent
 def MassShift(N,y,l0,m0,stepsize=0.05):
@@ -364,12 +392,12 @@ def EwLadung(N,y,l0,mdurchg):
         print(k, np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Q_n(N,k),N)@omega0[1][:,0]), np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0]))    
 
 
-@synchronized
+#@synchronized
 def ComputeMassShift(l0):
 	ys=[]
 	Ns=[]
 	MSs=[]
-	for eta in range(15,121,10):
+	for eta in range(30,50,10):
 		for N in range(10,25,2):  
 			ys.append(eta/100)
 			m0=-0.125*eta/100
@@ -382,13 +410,13 @@ def ComputeMassShift(l0):
 def ComputeMassShift_Abh_l(N,y):
 	ls=[]
 	MSs=[]
-	for L in range(75,950,50):
+	for L in range(10,496,10):
 			l=L/1000  
 			m0=-0.13*y
 			MSs.append(MassShift(N,y,l,m0,0.15))
 			ls.append(l)
-	for i in range(0,len(ls)):
-		print(ls[i], MSs[i], flush=True)
+	for i in range(0,int(len(ls))):
+		print(ls[i], MSs[i], 8*MSs[i]/y, ls[len(ls)-i-1], MSs[len(ls)-i-1], MSs[i]/MSs[len(ls)-i-1],  flush=True)
 
 
 def RenormierungVol(Vol, N, l0):
