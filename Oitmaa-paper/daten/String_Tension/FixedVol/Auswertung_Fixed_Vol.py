@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.interpolate import make_interp_spline
+
 
 plt.rcParams['text.usetex'] = True
 plt.rcParams.update({'font.size': 15})
@@ -40,6 +42,8 @@ def Extrapolator(m,l,deg=2,PLOT=0):
 
 
 x=np.linspace(0,0.5,1000)
+x1=np.linspace(0.05,0.5,1000)
+
 
 plt.plot(x,x**2, color='black')
 ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.475, 0.485, 0.495]
@@ -49,19 +53,30 @@ Err=np.zeros((len(Ms), len(ls)))
 STs2=np.zeros((len(Ms), len(ls)))
 Err2=np.zeros((len(Ms), len(ls)))
 
+plt.gca().set_prop_cycle(None)
 for i in range(0,len(Ms)):
     for j in range(0,len(ls)):
         #print(str(Ms[i]), str(ls[j]))
-        STs[i][j],Err[i][j]=Extrapolator(str(Ms[i]), str(ls[j]), 0)
-        STs2[i][j],Err2[i][j]=Extrapolator(str(Ms[i]), str(ls[j]),3, 0)
+        STs[i][j],Err[i][j]=Extrapolator(str(Ms[i]), str(ls[j]),3, 0)
+#       STs2[i][j],Err2[i][j]=Extrapolator(str(Ms[i]), str(ls[j]),3, 0)
 
     #plt.plot(ls, STs[i,:], linestyle='--', marker='.', markersize=10,  label=str(Ms[i]))#linewidth=1,
-    plt.errorbar(ls, STs2[i,:], Err2[i,:], linestyle='--', marker='.', markersize=10,  label=str(Ms[i]))
+    plt.errorbar(ls, STs[i,:], Err[i,:],linestyle='', marker='.', markersize=10)#,  label=str(Ms[i]))
+    
+plt.gca().set_prop_cycle(None)
+for i in range(0,len(Ms)):
+    X_Y_Spline = make_interp_spline(ls,STs[i,:]) 
+    plt.plot(x,X_Y_Spline(x), linestyle='--')
+
+plt.gca().set_prop_cycle(None)
+for i in range(0,len(Ms)):
+    plt.plot(-5,0.1, marker='.', linestyle='', markersize=8, label=str(Ms[i]))
 
 #plt.plot(x,0*x, color='black')
 plt.xlim(0,0.5)
+plt.ylim(-0.01,0.25)
 
-plt.legend(loc="upper left")
+plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.3)
 
 plt.xlabel('$l_0$',  fontsize=17)
 plt.ylabel('$\\frac{2T}{g^2}$', fontsize=17, rotation=0)
