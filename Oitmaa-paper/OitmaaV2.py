@@ -414,16 +414,18 @@ def EwLadung(N,y,l0,mdurchg):
 
 @synchronized
 def ComputeMassShift(l0):
-    etas=range(100,151,5)
-    Ns=range(10,25,2)
+    etas=[100,105,110,115,120,125,130,135,140,145, 150]#range(100,151,50)
+    Ns=[10, 12, 14, 16, 18, 20, 22, 24]#range(10,18,2)
     MSs=[0]*len(Ns)*len(etas)
+    
+    
     for eta in etas:
         for N in Ns:  
             MSs[int((N-10)/2+len(Ns)*(eta-100)/5)]=MassShift(N,eta/100,l0,-0.125*eta/100,0.2)
 			
     for j in range(0,len(etas)):
         for i in range(0,len(Ns)):
-            print("\""+str(Ns[i])+"_"+str(etas[i]/100)+"_"+str(l0)+"\":", MSs[int((N[i]-10)/2+len(Ns)*(eta[j]-100)/5)], ",", flush=True)
+             print("\""+str(Ns[i])+"_"+str(etas[j]/100)+"_"+str(l0)+"\":", MSs[int((Ns[i]-10)/2+len(Ns)*(etas[j]-100)/5)], ",", flush=True)
           
 
 #bussje
