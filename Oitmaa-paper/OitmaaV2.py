@@ -348,8 +348,8 @@ def EwLadung(N,y,l0,mdurchg):
         print(k, 
         np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Q_n(N,k),N)@omega0[1][:,0]), 
         np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0]),
-        0.5*(np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0])+\
-            np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-2,l0),N)@omega0[1][:,0])))    
+        0.5*(np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k,l0),N)@omega0[1][:,0])+\
+            np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0])))    
 
 
 @synchronized
