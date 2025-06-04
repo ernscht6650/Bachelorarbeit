@@ -304,24 +304,20 @@ def ComputeStringtension(mdurchg, alpha):
     for eta in range(300,1001,100):
         for N in range(10, 25, 2):
             Sts[int((N-10)/2+8*(eta-300)/100)]=Stringtension(N,eta/1000,mdurchg, alpha)
-          
-       
-  
+
     for i in range(0, len(Sts)):
          print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
 
 @synchronized
-def ComputeStringtensionVol(Vol,mdurchg, alpha, Nmin=10, Nmax=24):
+def ComputeStringtensionVol(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
     Sts=[[0]*5]*9
     for N in range(Nmin, Nmax+1, 2):
         Sts[int((N-10)/2)]=StringtensionVol(N,Vol,mdurchg, alpha)
-          
-       
-  
+
     for i in range(0, len(Sts)):
          print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
 
-@concurrent      
+@concurrent
 def StringtensionVol(N,Vol,mdurchg,alpha):
             y=Vol/N
             mu=2*(mdurchg-RenormierungVol(Vol,N,alpha))/y
@@ -330,7 +326,7 @@ def StringtensionVol(N,Vol,mdurchg,alpha):
             #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
             return [y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N]
 
-@concurrent      
+@concurrent
 def Stringtension(N,y,mdurchg,alpha):
             mu=2*(mdurchg-Renormierung(N,y,alpha))/y
             omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
@@ -354,12 +350,12 @@ def MassShift(N,y,l0,m0,stepsize=0.05):
     n=1
     Massen.append(m0+n*s)
     Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
-    
+
     if np.sign(Felder[0]*Felder[1]) > 0 and np.abs(Felder[1])>np.abs(Felder[0]):
         s=-s
     while np.sign(Felder[0]*Felder[n]) > 0: 
         #print(Massen[n], Felder[n])
-        
+
         n=n+1
         Massen.append(m0+n*s)
         Felder.append(Erwartungswert_Foverg(N,y,l0,Massen[n]))
@@ -418,16 +414,15 @@ def EwLadung(N,y,l0,mdurchg):
 
 
 @synchronized
-def ComputeMassShift(l0):
-    etas=[100,105,110,115,120,125,130,135,140,145, 150]#range(100,151,50)
-    Ns=[10, 12, 14, 16, 18, 20, 22, 24]#range(10,18,2)
+def ComputeMassShift(l0, Nmax=26, Nmin=10):
+    etas=list(range(100,151,5))
+    Ns=list(range(Nmin,Nmax+1))
     MSs=[0]*len(Ns)*len(etas)
-    
-    
+
     for eta in etas:
         for N in Ns:  
             MSs[int((N-10)/2+len(Ns)*(eta-100)/5)]=MassShift(N,eta/100,l0,-0.125*eta/100,0.2)
-			
+
     for j in range(0,len(etas)):
         for i in range(0,len(Ns)):
              print("\""+str(Ns[i])+"_"+str(etas[j]/100)+"_"+str(l0)+"\":", MSs[int((Ns[i]-10)/2+len(Ns)*(etas[j]-100)/5)], ",", flush=True)
