@@ -417,8 +417,8 @@ def ComputeMassShift(l0):
 	ys=[]
 	Ns=[]
 	MSs=[]
-	for eta in range(50,101,10):
-		for N in range(10,25,2):  
+	for eta in range(100,151,5):
+		for N in range(10,20,2):  
 			ys.append(eta/100)
 			m0=-0.125*eta/100
 			MSs.append(MassShift(N,eta/100,l0,m0,0.2))
