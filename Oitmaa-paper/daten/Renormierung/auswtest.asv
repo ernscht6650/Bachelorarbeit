@@ -1,0 +1,24 @@
+clc
+clearvars
+
+D1=importdata("Energien_Vol25.dat");
+D2=importdata("EnergienVOl.dat")
+
+obs=5
+deg=2
+x=linspace(0,2,1000)
+FP1=[1:9]
+
+p1=polyfit(D1(FP1,3), D1(FP1,obs), deg)
+
+plot(D1(:,3), D1(:, obs), ".", MarkerSize=15, DisplayName="Ny=25, l=0.1")
+hold on
+
+plot(D2([9:16],3), D2([9:16], obs), ".", MarkerSize=15, DisplayName="Ny=25, l=0.05")
+plot(D2([17:24],3), D2([17:24], obs), ".", MarkerSize=15, DisplayName="Ny=20, l=0.05")
+
+plot(x, polyval(p1,x), "-", "LineWidth", 2)
+
+xlim([0,2])
+hold off
+legend

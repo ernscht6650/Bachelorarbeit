@@ -1,0 +1,215 @@
+clc
+clearvars
+D=importdata("mg_y_N_M1_E0_M2_Alles4.dat");
+
+
+
+NumN=8;
+NumY=42; %24
+NumMasses=6;
+
+Masses=["0" "0.125" "0.25" "0.5" "5" "10"]
+Massen=[0 0.125 0.25 0.5 5 10]
+Werte=strings(NumMasses,1);
+Fehler=strings(NumMasses,1);
+Messwert=[ "$M_V/g$", "$\omega_0/2Nx$","$M_S/g$"]
+
+limits=zeros(6,2,3);
+limits(:,:,1)=[[0.47 0.79]; [0.7 1.01]; [1 1.25]; [1.49 1.7];[10.35 10.55]; [20.2 20.7]];
+limits(:,:,2)=[[-0.34 -0.22]; [-0.332 -0.19]; [-0.324 -0.17]; [-0.33 -0.13]; [-0.33 0.0];[-0.33 0]];
+limits(:,:,3)=[[1.15 1.5]; [1.35 1.7]; [1.5 1.9]; [1.95 2.4];[1.95 2.4];[1.95 2.4]];
+
+%CurMass=4;
+Obs=5
+
+deg=3;
+
+degMin=deg-1
+degMax=deg+1
+
+deg2=2;
+deg2Min=deg2%-1;
+deg2Max=deg2+1;
+
+Fit1Range=[3:8]
+Fit2range=[[1 15]; [1 15]; [1 15]; [1 15];[1 15];[1 15]]
+
+    D2=zeros(NumN+1,NumY, NumMasses);
+    indices=[1:1:NumN];
+
+    t = tiledlayout(3,2);
+for CurMass=[1:6]   
+    F2R=[Fit2range(CurMass,1):Fit2range(CurMass,2)]
+    nexttile
+    for i=[1:NumY]
+        D2(indices,i,CurMass)=D((CurMass-1)*(NumN*NumY)+indices+(i-1)*NumN,Obs);
+    end
+
+
+
+    x=linspace(-0.01, 1.3, 1000);
+    fitwerte=zeros(degMax,NumY);
+    Unsicherheiten=zeros(degMax,NumY);
+
+    N=D(indices,3);
+    for k=[degMin:degMax]
+        for j=[1:NumY]
+            [p, delta]=polyfit(1./N(Fit1Range),D2(Fit1Range,j,CurMass),k);
+            [y_fit,Uns] = polyval(p,0,delta);
+            fitwerte(k,j)=y_fit(1);
+            Unsicherheiten(k,j)=Uns(1);
+        end
+    end
+    D2(NumN+1,:,CurMass)=fitwerte(deg,:);
+    errors=zeros(2,NumY);
+
+    for j=[1:NumY]
+        %fitwerte(:,j)-Unsicherheiten(:,j)
+        errors(1,j)=D2(NumN+1,j,CurMass)-min(fitwerte([degMin:degMax],j)-Unsicherheiten([degMin:degMax],j));
+        errors(2,j)=max(fitwerte([degMin:degMax],j)+Unsicherheiten([degMin:degMax],j))-D2(NumN+1,j,CurMass);
+    end
+
+
+    %for j=[1:NumY]
+    %    p=fit(1./D(indices,3),D2(indices,j,CurMass),'poly3','normalize','on')
+    %    p(0.1)
+    %%zend
+
+
+    xi=linspace(0, 0.101, 1000);
+
+    %plot(xi, polyval(p,xi))
+    %plot(xi, p(xi))
+    %hold on
+    %plot(1./D(indices,3),D2(indices,j,CurMass), ".")
+    %hold off
+
+
+
+    %p=polyfit(D([1:NumY]*NumN,2), D2(NumN+1,:,CurMass), deg2);
+    %p(deg2+1)
+
+    fitwerte2=zeros(deg2Max,1);
+    Unsicherheiten2=zeros(deg2Max,1);
+
+    Y=D([1:NumY]*NumN,2);
+
+    for k=[deg2Min:deg2Max]
+        [p2, delta2]=polyfit(Y(F2R), D2(NumN+1,F2R,CurMass), k);
+        [y_fit2,Uns2] = polyval(p2,0,delta2);
+        fitwerte2(k)=y_fit2(1);
+        Unsicherheiten2(k)=Uns2(1);
+    end
+
+    [p2, delta2]=polyfit(Y(F2R), D2(NumN+1,F2R,CurMass), deg2);
+    
+
+    error2=zeros(2,1);
+
+    error2(1)=fitwerte2(deg2)-min(fitwerte2([deg2Min:deg2Max])-Unsicherheiten2([deg2Min:deg2Max]));
+    error2(2)=max(fitwerte2([deg2Min:deg2Max])+Unsicherheiten2([deg2Min:deg2Max]))-fitwerte2(deg2);
+    
+    
+    k=0;
+    while floor(max(error2)*10^k)==0;
+        k=k+1;
+    end
+
+
+    Fehler(CurMass)=string(round(max(error2)*10^(k+1) ));
+    digits=zeros(k+2,1);
+    
+    Temp=p2(deg2+1)
+    if Obs ~=5
+        p2(deg2+1)=p2(deg2+1)-2*Massen(CurMass)
+    end
+
+    for i=[1:k+2]
+        Rest=0;
+        for j=[1:i-1]
+            Rest=Rest+10^(i-j)*digits(j);
+        end
+        digits(i)=floor(p2(deg2+1)/(abs(p2(deg2+1)))*round(p2(deg2+1), k+1)*10^(i-1)-Rest);
+    end
+    
+    
+    dgts=string(digits);
+   
+    if p2(deg2+1)>0
+        Werte(CurMass)=string(floor(p2(deg2+1)))+".";
+    else
+        Werte(CurMass)="-"+string(ceil(p2(deg2+1)))+".";
+    end
+
+    for i=[2:k+2]
+        Werte(CurMass)=Werte(CurMass)+dgts(i);
+    end
+
+    A=zeros(1, NumY);
+
+    for i=1:NumY
+        A(i)=D2(NumN+1, i,CurMass);
+    end
+    p2(deg2+1)=Temp
+
+    %plot(D([1:NumY]*NumN,2), A, ".r", 'MarkerSize', 20)
+
+    heb=errorbar(0.0,fitwerte2(deg2),error2(1,1), error2(2,1), ".r", 'MarkerSize', 12);
+    heb.LineWidth = 1.5;
+    hold on
+    plot(x, polyval(p2,x), "-r", "LineWidth", 2)
+
+    bussje=errorbar(D([1:NumY]*NumN,2), A, errors(1,:), errors(2,:), ".k", 'MarkerSize', 10);
+    bussje.LineWidth = 1.25;
+
+    if Obs==5
+        plot(0,-1/pi, "ok", "LineWidth", 1.5);
+    end
+
+    B=zeros(NumN, NumY);
+
+    for i=1:NumY
+        B(:,i)=D2(indices, i,CurMass);
+    end
+
+    %for k=[1:NumN]
+    %    plot(D([1:NumY]*NumN, 2), B(k,:) , ".k", 'MarkerSize', 15)
+    %end
+
+    %a=[0];
+    %b=[-1/3.141592];
+    %plot(a, b, ".k", 'MarkerSize', 20)
+    hold off
+
+
+
+    ax=gca;
+    ax.FontSize=10;
+    ax.LineWidth=1;
+    xlabel('$y$', 'Interpreter','latex')
+   % ylabel(Messwert(Obs-3), 'Interpreter','latex')
+    %daspect([8 1 1])
+
+    %yticks([-0.3 -0.275 -0.25 -0.225 -0.2 -0.175 -0.15 -0.125 -0.1])
+    %yticklabels(["-0.3" "" "" "" "-0.2" "" "" "" "-0.1"])
+
+    xlim([0.0, 1])
+    ylim(limits(CurMass,:,Obs-3))
+    dummyh = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
+     dummyh2 = line(nan, nan, 'Linestyle', 'none', 'Marker', 'none', 'Color', 'none');
+    legend([dummyh dummyh2],{ "$m/g=$"+Masses(CurMass), Messwert(Obs-3)+"="+Werte(CurMass)+"("+Fehler(CurMass)+")"},  "Interpreter","latex", "Location","southeast", "Box","off")
+    box on
+
+   
+    hold off
+end
+
+
+"-0."+Werte+"("+Fehler+")"
+
+xi=1;
+%plot(1./N, D2([1:NumN],xi,3), ".", "MarkerSize", 20)
+hold on
+%plot(0, D2(NumN+1, xi,3),".","MarkerSize", 20)
+
+hold off
