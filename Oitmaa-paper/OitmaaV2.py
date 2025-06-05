@@ -3,6 +3,7 @@ import numpy as np
 from scipy.sparse import *
 from multiprocessing import Process
 import ast
+import time
 
 dense_matrix = np.array([[0, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 0]])
 
@@ -334,10 +335,11 @@ def Stringtension(N,y,mdurchg,alpha):
             #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
             return [y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N]
 
+
 @concurrent
 def MassShift(N,y,l0,m0,stepsize=0.05):
     #iteriere ueber Massen
-    threshold=0.0005
+    threshold=0.001
     Massen=[]
     Felder=[]
     Massen.append(m0) 
@@ -414,14 +416,14 @@ def EwLadung(N,y,l0,mdurchg):
 
 
 @synchronized
-def ComputeMassShift(l0, Nmax=26, Nmin=10):
+def ComputeMassShift(l0, Nmax=22, Nmin=10):
     etas=list(range(100,151,5))
-    Ns=list(range(Nmin,Nmax+1))
+    Ns=list(range(Nmin,Nmax+1,2))
     MSs=[0]*len(Ns)*len(etas)
 
     for eta in etas:
         for N in Ns:  
-            MSs[int((N-10)/2+len(Ns)*(eta-100)/5)]=MassShift(N,eta/100,l0,-0.125*eta/100,0.2)
+            MSs[int((N-10)/2+len(Ns)*(eta-100)/5)]=MassShift(N,eta/100,l0,-0.125*eta/100,0.15)
 
     for j in range(0,len(etas)):
         for i in range(0,len(Ns)):
@@ -448,3 +450,21 @@ def RenormierungVol(Vol, N, l0):
 def Renormierung(N,y,l0):
 	return dict[str(N)+"_"+str(y)+"_"+str(l0)]
 	
+def Vergleich(N, K=1, l0=0.1, mu=1, x=1):
+	t0=time.time()
+	H1=NonZeroSpin_entferner(V(N)*x+WL(N,l0)+mu*MassTerm(N),N)
+	t1=time.time()
+	H2=V(N)*x+WL(N,l0)+mu*MassTerm(N)
+	t2=time.time()
+	a=t1-t0
+	b=t2-t1
+	print(a,b)
+	t2=time.time()
+	linalg.eigs(H1, k=K, which='SR', return_eigenvectors=False)
+	t3=time.time()
+	linalg.eigs(H2, k=K, which='SR', return_eigenvectors=False)
+	t4=time.time()
+	c=t3-t2
+	d=t4-t3
+	print(c,d)	
+	print(a+c, b+d)
