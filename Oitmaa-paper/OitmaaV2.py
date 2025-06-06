@@ -1,7 +1,7 @@
 from deco import concurrent, synchronized
 import numpy as np
 from scipy.sparse import *
-from multiprocessing import Process
+#from multiprocessing import Process
 import ast
 import time
 
@@ -158,6 +158,23 @@ def SR2 (N):
 
     return A@Translation(N)
 
+def ChiralCondensate_overg(N,y):
+    summand=eye_array(2)+sigmaz
+    A=-1*kron(summand,eye_array(2**(N-1)))
+    for i in range(2,N):
+        xi=kron(summand, eye_array(2**(N-i)))*(-1)**i
+        A+=kron(eye_array(2**(i-1)), xi)
+    A+=kron(eye_array(2**(N-1)),summand)
+    return A/(2*N*y)
+
+def Free_Condensate_overg(moverg, y, N):
+    mu=2*moverg/y
+    x=1/(y**2)
+    A=0
+    for q in range(1, int(N/2)+1):
+        A+=mu/np.sqrt(mu**2+4*x**2*(np.cos(q*np.pi/(N+1)))**2)
+    return A/(N*y)
+
 def Dispersion (N,x,mdurchg, l0):
     K=15 #anzahl energien
     mu=2*mdurchg*np.sqrt(x)
@@ -313,7 +330,7 @@ def ComputeStringtension(mdurchg, alpha):
 def ComputeStringtensionVol(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
     Sts=[[0]*5]*9
     for N in range(Nmin, Nmax+1, 2):
-        Sts[int((N-10)/2)]=StringtensionVol(N,Vol,mdurchg, alpha)
+        Sts[int((N-Nmin)/2)]=StringtensionVol(N,Vol,mdurchg, alpha)
 
     for i in range(0, len(Sts)):
          print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
@@ -450,21 +467,22 @@ def RenormierungVol(Vol, N, l0):
 def Renormierung(N,y,l0):
 	return dict[str(N)+"_"+str(y)+"_"+str(l0)]
 	
-def Vergleich(N, K=1, l0=0.1, mu=1, x=1):
-	t0=time.time()
-	H1=NonZeroSpin_entferner(V(N)*x+WL(N,l0)+mu*MassTerm(N),N)
-	t1=time.time()
-	H2=V(N)*x+WL(N,l0)+mu*MassTerm(N)
-	t2=time.time()
-	a=t1-t0
-	b=t2-t1
-	print(a,b)
-	t2=time.time()
-	linalg.eigs(H1, k=K, which='SR', return_eigenvectors=False)
-	t3=time.time()
-	linalg.eigs(H2, k=K, which='SR', return_eigenvectors=False)
-	t4=time.time()
-	c=t3-t2
-	d=t4-t3
-	print(c,d)	
-	print(a+c, b+d)
+@concurrent
+def EW_Condensate(moverg, l0, N,y): 
+    mu=2*moverg/y
+    omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
+    Condensate=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(ChiralCondensate_overg(N,y),N)@omega0[1][:,0])
+    return [Condensate, Free_Condensate_overg(moverg,y,N), Condensate-Free_Condensate_overg(moverg,y,N)]
+
+@synchronized
+def ComputeCondensate(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
+    CCs=[0*3]*9
+    Ns=list(range(Nmin, Nmax+1, 2))
+    for N in range(Nmin, Nmax+1, 2):
+        y=Vol/N
+        CCs[int((N-Nmin)/2)]=EW_Condensate(mdurchg-RenormierungVol(Vol,N,alpha), alpha, N,y)
+
+    for i in range(0, len(Ns)):
+         print(Ns[i], Vol,mdurchg, alpha, CCs[i][0], CCs[i][1], CCs[i][2])	
+
+ComputeCondensate(25,0,0.25, 10,20)
