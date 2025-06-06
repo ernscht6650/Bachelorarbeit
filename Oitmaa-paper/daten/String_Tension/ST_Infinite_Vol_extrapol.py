@@ -68,21 +68,22 @@ def extrapoly(Data,plot=0):
         plt.plot(x,Obsfit)
         plt.errorbar(ys,Obs_infVol_y_s, errs,linestyle='', marker='.', markersize=10)
         plt.show()
-    #print(p, cov)
+    #print(p, p[deg2])
     return [p[deg2], np.sqrt(cov[deg2, deg2])]
+
 #extrapolN(1,Data,1)
 #extrapoly(plot=1)
 
 
 
-Masses=[0]
-ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.475, 0.485, 0.49]
+Masses=[0, 0.05]
+ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45]#, 0.475, 0.485, 0.49]
 
 STs=np.zeros((len(Masses), len(ls)))
 Errs=STs
 
 
-#Data=np.loadtxt('STV2_m'+str(0)+'_l'+str(0.49)+'.dat')
+Data=np.loadtxt('STV2_m'+str(0.05)+'_l'+str(0.3)+'.dat')
 #extrapoly(Data, 1)
 
 x=np.linspace(0,0.5,1000)  
@@ -92,8 +93,13 @@ for i in range(0,len(Masses)):
     for j in range(0,len(ls)):
         Data=np.loadtxt('STV2_m'+str(Masses[-i])+'_l'+str(ls[j])+'.dat')
         print(str(Masses[i]), str(ls[j]))
-        STs[i][j],Errs[i][j]=extrapoly(Data, 0)
-    print(STs, Errs)
+        A=extrapoly(Data,0)
+        
+        print(A)
+        #STs[i][j],Errs[i][j]=extrapoly(Data, 0)
+        STs[i][j]=A[0]
+        Errs[i][j]=A[1]
+        print(STs[i][j], Errs[i][j], "\n")
     plt.errorbar(ls, STs[i,:], Errs[i,:],linestyle='--', marker='.', markersize=10)
     #plt.show()
 
@@ -109,10 +115,10 @@ for i in range(0,len(Masses)):
 
 #plt.plot(x,0*x, color='black')
 plt.xlim(0,0.5)
-plt.ylim(-0.002,0.25)
+plt.ylim(-0.002,0.05)
 
 plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
 
 plt.xlabel('$l_0$',  fontsize=17)
 plt.ylabel('$\\frac{2T}{g^2}$', fontsize=17, rotation=0)
-plt.show()    
+#plt.show()    
