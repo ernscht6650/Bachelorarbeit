@@ -301,10 +301,10 @@ def Skalarren(Vol, mdurchg, l0):
 
 @synchronized
 def ComputeStringtension(mdurchg, alpha):
-    Sts=[[0]*5]*8*8
-    for eta in range(300,1001,100):
+    Sts=[[0]*5]*11*8
+    for eta in range(100,151,5):
         for N in range(10, 25, 2):
-            Sts[int((N-10)/2+8*(eta-300)/100)]=Stringtension(N,eta/1000,mdurchg, alpha)
+            Sts[int((N-10)/2+8*(eta-100)/5)]=Stringtension(N,eta/100,mdurchg, alpha)
 
     for i in range(0, len(Sts)):
          print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
@@ -423,11 +423,11 @@ def ComputeMassShift(l0, Nmax=22, Nmin=10):
 
     for eta in etas:
         for N in Ns:  
-            MSs[int((N-10)/2+len(Ns)*(eta-100)/5)]=MassShift(N,eta/100,l0,-0.125*eta/100,0.15)
+            MSs[int((N-Ns[0])/2+len(Ns)*(eta-etas[0])/5)]=MassShift(N,eta/100,l0,-0.125*eta/100,0.15)
 
     for j in range(0,len(etas)):
         for i in range(0,len(Ns)):
-             print("\""+str(Ns[i])+"_"+str(etas[j]/100)+"_"+str(l0)+"\":", MSs[int((Ns[i]-10)/2+len(Ns)*(etas[j]-100)/5)], ",", flush=True)
+             print("\""+str(Ns[i])+"_"+str(etas[j]/100)+"_"+str(l0)+"\":", MSs[int((Ns[i]-Ns[0])/2+len(Ns)*(etas[j]-etas[0])/5)], ",", flush=True)
           
 
 #bussje
