@@ -9,7 +9,7 @@ done
 for m in 0 0.05 0.1 0.2 0.3 0.35 0.4 0.8 1.6
 do
 for l in 0.05 0.1 0.2 0.3 0.4 0.45 0.475 0.485 0.49
-python3 -c "from OitmaaV2 import *; ComputeCondensate(25,${m}, ${l}, 10,26)"
+python3 -c "from OitmaaV2 import *; ComputeCondensate(25,${m}, ${l}, 10,26)" >> CC_Vol25_m${m}_l${l}.dat &
 sleep 10m
 done
 done

@@ -485,4 +485,4 @@ def ComputeCondensate(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
     for i in range(0, len(Ns)):
          print(Ns[i], Vol,mdurchg, alpha, CCs[i][0], CCs[i][1], CCs[i][2])	
 
-ComputeCondensate(25,0,0.25, 10,20)
+
