@@ -17,9 +17,9 @@ sigmap=csr_matrix(np.array([[0,1],[0,0]]))
 sigmam=csr_matrix(np.array([[0,0],[1,0]]))
 
 #Daten fuer Renormierung
-with open('dictionary.txt') as f:
+with open('MS_Vol.dat') as f:
     data = f.read()
-dictVol = ast.literal_eval(data)
+dictVol = ast.literal_eval('{'+data+'}')
 
 with open('dictionary2.txt') as f:
     data = f.read()
