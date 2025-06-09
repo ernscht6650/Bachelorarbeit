@@ -21,9 +21,9 @@ with open('MS_Vol.dat') as f:
     data = f.read()
 dictVol = ast.literal_eval('{'+data+'}')
 
-with open('dictionary2.txt') as f:
+with open('MS_AllesMoegliche_N_y_l.dat') as f:
     data = f.read()
-dict = ast.literal_eval(data)
+dict = ast.literal_eval('{'+data+'}')
 
 #Terme des Hamiltonians
 def Herm (A):
