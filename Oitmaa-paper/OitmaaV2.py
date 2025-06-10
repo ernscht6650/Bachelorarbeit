@@ -472,7 +472,7 @@ def EW_Condensate(moverg, l0, N,y):
     mu=2*moverg/y
     omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
     Condensate=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(ChiralCondensate_overg(N,y),N)@omega0[1][:,0])
-    return [Condensate, Free_Condensate_overg(moverg,y,N), Condensate-Free_Condensate_overg(moverg,y,N)]
+    return [Condensate, Free_Condensate_overg(moverg,y,N), Condensate-Free_Condensate_overg(moverg,y,N), N,y]
 
 @synchronized
 def ComputeCondensate(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
@@ -496,4 +496,5 @@ def ComputeCondensateV2(mdurchg, alpha, Nmin=10, Nmax=24):
             CCs[int((N-Nmin)/2+8*(eta-100)/5)]=EW_Condensate(mdurchg-Renormierung(N,eta/100,alpha), alpha, N,eta/100)
 
     for i in range(0, len(CCs)):
-         print(Ns[i-int(i/len(etas))], etas[int(i/len(etas))]/100 ,mdurchg, alpha,  CCs[i])
+         #print(Ns[i-int(i/len(etas))], etas[int(i/len(etas))]/100 ,mdurchg, alpha,  CCs[i])
+         print(CCs[3], CCs[4] ,mdurchg, alpha,  CCs[0], CCs[1], CCs[2])
