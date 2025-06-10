@@ -497,4 +497,4 @@ def ComputeCondensateV2(mdurchg, alpha, Nmin=10, Nmax=24):
 
     for i in range(0, len(CCs)):
          #print(Ns[i-int(i/len(etas))], etas[int(i/len(etas))]/100 ,mdurchg, alpha,  CCs[i])
-         print(CCs[3], CCs[4] ,mdurchg, alpha,  CCs[0], CCs[1], CCs[2])
+         print(CCs[i][3], CCs[i][4] ,mdurchg, alpha,  CCs[i][0], CCs[i][1], CCs[i][2])
