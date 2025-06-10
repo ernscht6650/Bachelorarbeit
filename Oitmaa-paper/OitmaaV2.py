@@ -440,7 +440,7 @@ def ComputeMassShift(l0, Nmax=22, Nmin=10):
 
     for eta in etas:
         for N in Ns:  
-            MSs[int((N-Ns[0])/2+len(Ns)*(eta-etas[0])/5)]=MassShift(N,eta/100,l0,-0.125*eta/100,0.15)
+            MSs[int((N-Ns[0])/2+len(Ns)*(eta-etas[0])/5)]=MassShift(N,eta/100,l0,-0.14*eta/100,0.15)
 
     for j in range(0,len(etas)):
         for i in range(0,len(Ns)):
