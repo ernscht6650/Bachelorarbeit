@@ -486,3 +486,14 @@ def ComputeCondensate(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
          print(Ns[i], Vol,mdurchg, alpha, CCs[i][0], CCs[i][1], CCs[i][2])	
 
 
+@synchronized
+def ComputeCondensateV2(mdurchg, alpha):
+    CCs=[[0]*5]*11*8
+    Ns=list(range(10, 24+1, 2))
+    etas=list(range(100,151,5))
+    for eta in range(100,151,5):
+        for N in range(10, 25, 2):
+            CCs[int((N-10)/2+8*(eta-100)/5)]=EW_Condensate(mdurchg-Renormierung(N,eta/100,alpha), alpha, N,eta/100)
+
+    for i in range(0, len(CCs)):
+         print(Ns[i-int(i/len(etas))], etas[int(i/len(etas))]/100 ,mdurchg, alpha,  CCs[i])
