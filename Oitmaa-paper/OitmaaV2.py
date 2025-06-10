@@ -317,9 +317,9 @@ def Skalarren(Vol, mdurchg, l0):
             #print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
 
 @synchronized
-def ComputeStringtension(mdurchg, alpha):
-    Sts=[[0]*5]*11*8
-    for eta in range(100,151,5):
+def ComputeStringtension(mdurchg, alpha,etamin=100, etamax=150):
+    Sts=[[0]*5]*int((etamax-etamin+5)/5)*8
+    for eta in range(etamin,etamax+1,5):
         for N in range(10, 25, 2):
             Sts[int((N-10)/2+8*(eta-100)/5)]=Stringtension(N,eta/100,mdurchg, alpha)
 
@@ -433,8 +433,8 @@ def EwLadung(N,y,l0,mdurchg):
 
 
 @synchronized
-def ComputeMassShift(l0, Nmax=22, Nmin=10):
-    etas=list(range(100,151,5))
+def ComputeMassShift(l0, Nmax=22, Nmin=10, etamin=100,etamax=150):
+    etas=list(range(etamin,etamax+1,5))
     Ns=list(range(Nmin,Nmax+1,2))
     MSs=[0]*len(Ns)*len(etas)
 
