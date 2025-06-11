@@ -352,6 +352,12 @@ def GrundzustandsenergieVol(N,Vol,mdurchg,alpha=0):
             #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
             return omega0[0]/N
 
+def GrundzustandsenergieV2(N,y,mdurchg,alpha=0):
+            mu2=2*(mdurchg-Renormierung(N,y,0))/y
+            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+            #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
+            return omega0[0]/N
+
 
 def Stringtension(N,y,mdurchg,alpha):
             mu=2*(mdurchg-Renormierung(N,y,alpha))/y
