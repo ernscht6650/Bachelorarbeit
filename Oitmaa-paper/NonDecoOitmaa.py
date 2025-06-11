@@ -1,4 +1,4 @@
-from deco import concurrent, synchronized
+
 import numpy as np
 from scipy.sparse import *
 #from multiprocessing import Process
@@ -316,7 +316,7 @@ def Skalarren(Vol, mdurchg, l0):
             print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar])*y), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
             #print(mdurchg, Vol, y, np.real(0.5*(Eprime[1]-Eprime[0])*y), np.real(0.5*Eprime[0]*y**2/N), np.real(-0.5*(Eprime[0]-Eprime[scalar2])*y), l0, flush=True)
 
-@synchronized
+
 def ComputeStringtension(mdurchg, alpha,etamin=100, etamax=150):
     Sts=[[0]*5]*int((etamax-etamin+5)/5)*8
     for eta in range(etamin,etamax+1,5):
@@ -326,7 +326,7 @@ def ComputeStringtension(mdurchg, alpha,etamin=100, etamax=150):
     for i in range(0, len(Sts)):
          print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
 
-@synchronized
+
 def ComputeStringtensionVol(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
     Sts=[[0]*5]*9
     for N in range(Nmin, Nmax+1, 2):
@@ -335,7 +335,7 @@ def ComputeStringtensionVol(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
     for i in range(0, len(Sts)):
          print(mdurchg, alpha, Sts[i][0], Sts[i][1], Sts[i][2], Sts[i][3], Sts[i][4])	
 
-@concurrent
+
 def StringtensionVol(N,Vol,mdurchg,alpha):
             y=Vol/N
             mu=2*(mdurchg-RenormierungVol(Vol,N,alpha))/y
@@ -345,17 +345,17 @@ def StringtensionVol(N,Vol,mdurchg,alpha):
             #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
             return [y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N]
 
-@concurrent
+
 def Stringtension(N,y,mdurchg,alpha):
             mu=2*(mdurchg-Renormierung(N,y,alpha))/y
-            mu2=2*(mdurchg-Renormierung(N,y,0))/y
+            mu=2*(mdurchg-Renormierung(N,y,0))/y
             omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
             omegaAlpha=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
             #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
             return [y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N]
 
 
-@concurrent
+
 def MassShift(N,y,l0,m0,stepsize=0.05):
     #iteriere ueber Massen
     threshold=0.001
@@ -402,18 +402,18 @@ def MassShift(N,y,l0,m0,stepsize=0.05):
     return -MS
    
 
-@synchronized
-def MassShiftVol(Vol, l0, Nmax=24, Nmin=10, stepsize=0.2):
-	ys=[]
-	Ns=[]
-	MSs=[]
-	for N in range(Nmin, Nmax+1,2):
-		ys.append(Vol/N)
-		m0=-1.3*Vol/N
-		Ns.append(N)
-		MSs.append(MassShift(N,Vol/N,l0,m0, stepsize))
-	for i in range(0, len(ys)):
-		print("\""+str(Vol)+"_"+str(Ns[i])+"_"+str(l0)+"\":", MSs[i], ",", flush=True)
+
+#def MassShiftVol(Vol, l0, Nmax=24, Nmin=10, stepsize=0.2):
+#	ys=[]
+#	Ns=[]
+#	MSs=[]
+#	for N in range(Nmin, Nmax+1,2):
+#		ys.append(Vol/N)
+#		m0=-1.3*Vol/N
+#		Ns.append(N)
+#		MSs.append(MassShift(N,Vol/N,l0,m0, stepsize))
+#	for i in range(0, len(ys)):
+#		print("\""+str(Vol)+"_"+str(Ns[i])+"_"+str(l0)+"\":", MSs[i], ",", flush=True)
 
 def Erwartungswert_Foverg(N,y,l0,mdurchg):      
     mu=2*mdurchg/y
@@ -434,7 +434,7 @@ def EwLadung(N,y,l0,mdurchg):
     
 
 
-@synchronized
+
 def ComputeMassShift(l0, Nmax=22, Nmin=10, etamin=100,etamax=150):
     etas=list(range(etamin,etamax+1,5))
     Ns=list(range(Nmin,Nmax+1,2))
@@ -449,8 +449,7 @@ def ComputeMassShift(l0, Nmax=22, Nmin=10, etamin=100,etamax=150):
              print("\""+str(Ns[i])+"_"+str(etas[j]/100)+"_"+str(l0)+"\":", MSs[int((Ns[i]-Ns[0])/2+len(Ns)*(etas[j]-etas[0])/5)], ",", flush=True)
           
 
-#bussje
-@synchronized
+
 def ComputeMassShift_Abh_l(N,y):
 	ls=[]
 	MSs=[]
@@ -469,14 +468,14 @@ def RenormierungVol(Vol, N, l0):
 def Renormierung(N,y,l0):
 	return dict[str(N)+"_"+str(y)+"_"+str(l0)]
 	
-@concurrent
+
 def EW_Condensate(moverg, l0, N,y): 
     mu=2*moverg/y
     omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
     Condensate=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(ChiralCondensate_overg(N,y),N)@omega0[1][:,0])
     return [Condensate, Free_Condensate_overg(moverg,y,N), Condensate-Free_Condensate_overg(moverg,y,N), N,y]
 
-@synchronized
+
 def ComputeCondensate(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
     CCs=[0*3]*9
     Ns=list(range(Nmin, Nmax+1, 2))
@@ -488,7 +487,7 @@ def ComputeCondensate(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
          print(Ns[i], Vol,mdurchg, alpha, CCs[i][0], CCs[i][1], CCs[i][2])	
 
 
-@synchronized
+
 def ComputeCondensateV2(mdurchg, alpha, Nmin=10, Nmax=24):
     CCs=[[0]*5]*11*8
     Ns=list(range(Nmin, Nmax+1, 2))
