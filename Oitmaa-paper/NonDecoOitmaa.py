@@ -345,6 +345,13 @@ def StringtensionVol(N,Vol,mdurchg,alpha):
             #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
             return [y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N]
 
+def GrundzustandsenergieVol(N,Vol,mdurchg,alpha=0):
+            y=Vol/N
+            mu2=2*(mdurchg-RenormierungVol(Vol,N,0))/y
+            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+            #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
+            return omega0[0]/N
+
 
 def Stringtension(N,y,mdurchg,alpha):
             mu=2*(mdurchg-Renormierung(N,y,alpha))/y
@@ -435,18 +442,18 @@ def EwLadung(N,y,l0,mdurchg):
 
 
 
-def ComputeMassShift(l0, Nmax=22, Nmin=10, etamin=100,etamax=150):
-    etas=list(range(etamin,etamax+1,5))
-    Ns=list(range(Nmin,Nmax+1,2))
-    MSs=[0]*len(Ns)*len(etas)
+#def ComputeMassShift(l0, Nmax=22, Nmin=10, etamin=100,etamax=150):
+#    etas=list(range(etamin,etamax+1,5))
+#    Ns=list(range(Nmin,Nmax+1,2))
+#    MSs=[0]*len(Ns)*len(etas)
+#
+#    for eta in etas:
+#        for N in Ns:  
+#            MSs[int((N-Ns[0])/2+len(Ns)*(eta-etas[0])/5)]=MassShift(N,eta/100,l0,-0.14*eta/100,0.15)
 
-    for eta in etas:
-        for N in Ns:  
-            MSs[int((N-Ns[0])/2+len(Ns)*(eta-etas[0])/5)]=MassShift(N,eta/100,l0,-0.14*eta/100,0.15)
-
-    for j in range(0,len(etas)):
-        for i in range(0,len(Ns)):
-             print("\""+str(Ns[i])+"_"+str(etas[j]/100)+"_"+str(l0)+"\":", MSs[int((Ns[i]-Ns[0])/2+len(Ns)*(etas[j]-etas[0])/5)], ",", flush=True)
+#    for j in range(0,len(etas)):
+#        for i in range(0,len(Ns)):
+#             print("\""+str(Ns[i])+"_"+str(etas[j]/100)+"_"+str(l0)+"\":", MSs[int((Ns[i]-Ns[0])/2+len(Ns)*(etas[j]-etas[0])/5)], ",", flush=True)
           
 
 

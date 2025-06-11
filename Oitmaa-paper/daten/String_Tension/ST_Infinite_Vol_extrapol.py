@@ -10,9 +10,12 @@ ColY=2
 ColObs=6
 
 deg1=2
-Fit1Range=list(range(4,8))
+Fit1Range=list(range(2,7))
 deg2=2
 Fit2Range=list(range(0,11))
+
+degA=1
+FitARange=list(range(2,6))
 
 NumN=8
 etas=list(range(100,151,5))
@@ -44,7 +47,45 @@ def extrapolN(y,Data, plot=0):
     return [p[deg1], np.sqrt(cov[deg1, deg1])]
 
 
+def Aitken(y,Data, plot=0):
+    indicesY=np.where(Data[:,ColY]==y)[0]
+    #print(indicesY)
+    #Data2=Data[indicesY[0]:indicesY[len(indicesY)-1],:]
+    N=Data[indicesY, ColN]
+    X_N=Data[indicesY, ColObs]
+    A=[]
+    N2=[]
+    for n in range(0, NumN-2):
+        x_n=X_N[n]
+        delta_x_n=X_N[n+1]-x_n
+        delta_sq_x_n=x_n-2*X_N[n+1]+X_N[n+2]
+        A.append(x_n-(delta_x_n**2)/delta_sq_x_n)
+        N2.append(N[n])
+
+    
+    p,cov=np.polyfit(1/N, X_N,deg1, cov=True)
+    p2,cov2=np.polyfit(1/np.array(N2[FitARange[0]:FitARange[-1]]), A[FitARange[0]:FitARange[-1]],degA, cov=True)
+    if plot==1:
+        x=np.linspace(0,0.1,1000)
+        Obsfit=0*x
+        Obsfit2=0*x
+        for i in range(0,deg1+1):
+            Obsfit+=p[deg1-i]*x**(i)
+        for i in range(0,degA+1):
+            Obsfit2+=p2[degA-i]*x**(i)
+        plt.plot(x,Obsfit)
+        plt.plot(1/N, X_N, '.')
+        plt.plot(x,Obsfit2, label='Aitken')
+        plt.plot(1/np.array(N2), A, '.')
+
+        plt.title("y="+str(y))
+        plt.show()
+    #print(p, cov)
+    #return [p2[degA], np.sqrt(cov2[degA, degA])]
+    return [0.5*(A[-1]+A[-2]), np.abs(0.5*(A[-1]-A[-2]))]
+
 def extrapoly(Data,plot=0):
+    #print(Data)
     ys=[]
     Obs_infVol_y_s=[]
     errs=[]
@@ -55,6 +96,7 @@ def extrapoly(Data,plot=0):
         y=eta/100
         ys.append(y)
         Obs_infVol_y,err=extrapolN(y,Data)
+        #Obs_infVol_y,err=Aitken(y,Data)
         Obs_infVol_y_s.append(Obs_infVol_y)
         errs.append(err)
         weights.append(1/err)
@@ -76,15 +118,18 @@ def extrapoly(Data,plot=0):
 
 
 
-Masses=[0, 0.05]
-ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45]#, 0.475, 0.485, 0.49]
+Masses=[0, 0.05, 0.1, 0.2]#, 0.3, 0.35, 0.4, 0.8, 1.6]
+ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.6, 0.7 ,0.8, 0.9 ,0.95]
 
 STs=np.zeros((len(Masses), len(ls)))
-Errs=STs
+Errs=np.zeros((len(Masses), len(ls)))
 
 
-Data=np.loadtxt('STV2_m'+str(0.05)+'_l'+str(0.3)+'.dat')
-#extrapoly(Data, 1)
+Data=np.loadtxt('STV2_m'+str(0.2)+'_l'+str(0.7)+'.dat')
+print(Data)
+#Aitken(1.1,Data, 1)
+extrapolN(1,Data,1)
+extrapoly(Data,1)
 
 x=np.linspace(0,0.5,1000)  
 plt.plot(x,x**2, color='black')
@@ -92,14 +137,15 @@ plt.gca().set_prop_cycle(None)
 for i in range(0,len(Masses)):
     for j in range(0,len(ls)):
         Data=np.loadtxt('STV2_m'+str(Masses[-i])+'_l'+str(ls[j])+'.dat')
-        print(str(Masses[i]), str(ls[j]))
+        #print(str(Masses[i]), str(ls[j]))
         A=extrapoly(Data,0)
         
-        print(A)
+        #print(A)
         #STs[i][j],Errs[i][j]=extrapoly(Data, 0)
         STs[i][j]=A[0]
         Errs[i][j]=A[1]
-        print(STs[i][j], Errs[i][j], "\n")
+        #print(A[0], A[1])
+        #print(STs[i][j], Errs[i][j], "\n")
     plt.errorbar(ls, STs[i,:], Errs[i,:],linestyle='--', marker='.', markersize=10)
     #plt.show()
 
@@ -111,14 +157,13 @@ for i in range(0,len(Masses)):
 
 plt.gca().set_prop_cycle(None)
 for i in range(0,len(Masses)):
-    plt.plot(-5,0.1, marker='.', linestyle='', markersize=8, label=str(Masses[len(Masses)-1-i]))
-
+    plt.plot(-5,0.1, marker='.', linestyle='', markersize=8, label=str(Masses[i]))
 #plt.plot(x,0*x, color='black')
-plt.xlim(0,0.5)
-plt.ylim(-0.002,0.05)
+plt.xlim(0,1)
+#plt.ylim(-0.01,0.25)
 
 plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
 
 plt.xlabel('$l_0$',  fontsize=17)
 plt.ylabel('$\\frac{2T}{g^2}$', fontsize=17, rotation=0)
-#plt.show()    
+plt.show()    

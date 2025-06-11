@@ -29,15 +29,15 @@ x=np.linspace(0,0.5,1000)
 
 def extrapolVolume():
     Ls=np.array(range(25,476,25))/1000
-    Ls2=np.array(range(150,351,25))/1000
+    Ls2=np.array(range(25,476,25))/1000
     for N in range(10, 21,2):
         extrapolVol(25,N,Ls,1)
         MSs=extrapolVol(25,N, Ls2)
-        p=np.polyfit(Ls2-0.25,np.array(MSs)-0.125,3)
+        p=np.polyfit(Ls2-0.25,np.array(MSs)-0.125,5)
         y=np.polyval(p,x-0.25)
         plt.plot(x,y+0.125)
-        print("\""+str(25)+"_"+str(N)+"_"+str(0)+"\":", np.polyval(p,-0.25)+0.125, ",")
-
+        print("\""+str(25)+"_"+str(N)+"_"+str(0)+"\":", (np.polyval(p,-0.25)+0.125)*25/N, ",")
+        print("\""+str(25)+"_"+str(N)+"_"+str(0.5)+"\":", (np.polyval(p,0.25)+0.125)*25/N, ",")
 
     plt.legend(loc="lower left",handletextpad=-0.5, borderpad=0.4)
     plt.show()
