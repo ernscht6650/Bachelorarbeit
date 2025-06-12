@@ -478,12 +478,15 @@ def ComputeMassShift_Abh_l(N,y):
 
 def RenormierungVol(Vol, N, l0):
     if l0 > 0.5:
-         return dictVol[str(Vol)+"_"+str(N)+"_"+str(1-l0)]
+         return dictVol[str(Vol)+"_"+str(N)+"_"+str(round(1-l0, 4))]
     else:
         return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
 def Renormierung(N,y,l0):
-	return dict[str(N)+"_"+str(y)+"_"+str(l0)]
+    if l0 > 0.5:
+        return dict[str(N)+"_"+str(y)+"_"+str(round(1-l0, 4))]
+    else:
+	    return dict[str(N)+"_"+str(y)+"_"+str(l0)]
 	
 
 def EW_Condensate(moverg, l0, N,y): 
