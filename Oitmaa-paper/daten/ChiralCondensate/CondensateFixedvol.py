@@ -8,17 +8,18 @@ plt.rcParams.update({'font.size': 15})
 
 def Extrapolator(m,l,deg=2,PLOT=0):
     NumN=9
-    
-    FR=[1, NumN]
+    ColObs=4
+
+    FR=[4, NumN]
 
     Data=np.loadtxt('/home/florianstein/Documents/Bachelorarbeit/Oitmaa-paper/daten/ChiralCondensate/FixedVol/CC_Vol25_m'+m+'_l'+l+'.dat')
 
     N=Data[FR[0]:FR[1], 0]
     #Y=Data[FR[0]:FR[1], 3]
-    ST=Data[FR[0]:FR[1], 6]
+    ST=Data[FR[0]:FR[1], ColObs]
 
-    Np=Data[0:NumN, 3]
-    STp=Data[0:NumN, 6]
+    Np=Data[0:NumN, 0]
+    STp=Data[0:NumN, ColObs]
     #print(1/N, ST)
 
     p,cov=np.polyfit(1/N, ST, deg, cov=True)
@@ -33,6 +34,7 @@ def Extrapolator(m,l,deg=2,PLOT=0):
 
     if PLOT==1:
         plt.plot(x, STextrapol)
+        #plt.plot(x, 0.7*np.log(x)+1.3)
         plt.plot(1/Np,STp, '.', markersize=10)
         plt.xlim(0,0.1)
         plt.show()
@@ -40,7 +42,7 @@ def Extrapolator(m,l,deg=2,PLOT=0):
     
     return([p[deg],np.sqrt(np.diag(cov)[deg])])
 
-#Extrapolator("0", "0.95",2,1)
+Extrapolator("1.6", "0.45",2,1)
 
 x=np.linspace(0,0.5,1000)
 x1=np.linspace(0.05,0.5,1000)

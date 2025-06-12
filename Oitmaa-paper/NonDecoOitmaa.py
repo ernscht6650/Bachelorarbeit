@@ -433,6 +433,7 @@ def Erwartungswert_Foverg(N,y,l0,mdurchg):
     omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
     Fdurchg=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Foverg(N,l0,int(N/2),1),N)@omega0[1][:,0])
     return Fdurchg
+
     
 
 def EwLadung(N,y,l0,mdurchg):
@@ -476,7 +477,10 @@ def ComputeMassShift_Abh_l(N,y):
 
 
 def RenormierungVol(Vol, N, l0):
-    return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
+    if l0 > 0.5:
+         return dictVol[str(Vol)+"_"+str(N)+"_"+str(1-l0)]
+    else:
+        return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
 def Renormierung(N,y,l0):
 	return dict[str(N)+"_"+str(y)+"_"+str(l0)]
