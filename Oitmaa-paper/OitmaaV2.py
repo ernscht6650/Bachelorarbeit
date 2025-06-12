@@ -167,6 +167,9 @@ def ChiralCondensate_overg(N,y):
     A+=kron(eye_array(2**(N-1)),summand)
     return A/(2*N*y)
 
+
+
+
 def Free_Condensate_overg(moverg, y, N):
     mu=2*moverg/y
     x=1/(y**2)
