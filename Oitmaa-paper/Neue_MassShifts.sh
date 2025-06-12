@@ -1,7 +1,7 @@
 for l in 0.15 0.25 0.35 0.225 0.275 0.075 0.325
 do 
-python3 -c "from OitmaaV2 import *; ComputeMassShift(${l}, 24, 10, 85, 150):" >> MS_AllesMoegliche_N_y_l.dat &
-sleep 90m
+python3 -c "from OitmaaV2 import *; ComputeMassShift(${l}, 24, 10, 85, 150)" >> MS_AllesMoegliche_N_y_l.dat &
+sleep 45m
 done
 
 for l in 0.05 0.025
