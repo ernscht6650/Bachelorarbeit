@@ -64,4 +64,7 @@ def extrapolInvolFinal(N,y):
 #    extrapolInvolFinal(N,1.0)
 #plt.legend(loc="lower left",handletextpad=-0.5, borderpad=0.4)
 #plt.show()
-extrapolVolume()
+#extrapolVolume()
+
+extrapolInvolFinal(24,1.0)
+plt.show()

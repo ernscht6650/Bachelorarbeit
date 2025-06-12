@@ -11,11 +11,11 @@ def Extrapolator(m,l,deg=2,PLOT=0):
     
     FR=[1, NumN]
 
-    Data=np.loadtxt('ST_Vol25_m'+m+'_l'+l+'.dat')
+    Data=np.loadtxt('ST_Vol25_korr_m'+m+'_l'+l+'.dat')
 
-    N=Data[FR[0]:FR[1], 3]
-    Y=Data[FR[0]:FR[1], 3]
-    ST=Data[FR[0]:FR[1], 6]
+    N=Data[FR[0]:FR[1], 2]
+    Y=Data[FR[0]:FR[1], 6]
+    ST=Data[FR[0]:FR[1], 5]
 
     Np=Data[0:NumN, 3]
     STp=Data[0:NumN, 6]
@@ -40,7 +40,7 @@ def Extrapolator(m,l,deg=2,PLOT=0):
     
     return([p[deg],np.sqrt(np.diag(cov)[deg])])
 
-Extrapolator("0", "0.95",2,1)
+#Extrapolator("0", "0.95",2,1)
 
 x=np.linspace(0,1,1000)
 x1=np.linspace(0.05,0.5,1000)
@@ -74,8 +74,8 @@ for i in range(0,len(Ms)):
     plt.plot(-5,0.1, marker='.', linestyle='', markersize=8, label=str(Ms[len(Ms)-1-i]))
 
 #plt.plot(x,0*x, color='black')
-plt.xlim(0,1)
-plt.ylim(-0.01,0.5)
+plt.xlim(0,0.5)
+plt.ylim(-0.02,0.25)
 
 plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
 
