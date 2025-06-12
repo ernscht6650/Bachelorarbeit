@@ -8,5 +8,5 @@ do
     do
         python3 -c "from NonDecoOitmaa import *; print(${N},  ${mdurchg}, 0, ${Vol}, GrundzustandsenergieVol(${N}, ${Vol}, ${mdurchg}))">> GZ_Dichte_m${mdurchg}_l0.dat &
     done
-   sleep 20m
+   sleep 10m
 done
