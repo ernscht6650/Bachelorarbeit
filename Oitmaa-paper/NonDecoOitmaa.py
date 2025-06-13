@@ -366,9 +366,9 @@ def GrundzustandsenergieVol(N,Vol,mdurchg,alpha=0):
 def GrundzustandsenergieZentrumVol(N,Vol,mdurchg,alpha=0):
             y=Vol/N
             mu2=2*(mdurchg-RenormierungVol(Vol,N,alpha))/y
-            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True))
+            omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
             omega=0.5*np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Zentrumshamiltonian(N,Vol/N, mdurchg, alpha),N)@omega0[1][:,0])
-            return omega
+            return np.real(omega)
 
 
 def GrundzustandsenergieV2(N,y,mdurchg,alpha=0):
