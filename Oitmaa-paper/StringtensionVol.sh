@@ -1,14 +1,16 @@
-\#!/bin/bash
+#!/bin/bash
 
 VOL=$1
 Nmin=$2
-Nmax=$2
+Nmax=$3
+
+PFAD=/home/users/fstein/Documents/Bachelorarbeit/Oitmaa-paper/daten/String_Tension/FixedVol/ZentrumsDichte
 
 for  l in 0 0.1 0.2 0.3 0.4 0.45
 do
 for m in 0 0.05 0.1 0.2 0.35 0.4 0.8 1.6
 do
-python3 << EOF >> eder.txt
+python3 << EOF >> ${PFAD}/ST_Vol${VOL}_zentrum_m${m}_l${l}.dat
 import ast
 Vol=${VOL}
 mdurchg=${m}
