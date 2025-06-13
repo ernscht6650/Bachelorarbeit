@@ -8,7 +8,7 @@ PFAD=/home/users/fstein/Documents/Bachelorarbeit/Oitmaa-paper/daten/String_Tensi
 
 for  l in 0 0.05 0.1 0.15  0.2 0.25  0.3 0.35 0.4 0.45 0.475 0.485 0.49 0.5
 do
-for m in 0 0.05 0.1 0.2 0.35 0.4 0.8 1.6
+for m in 0 0.05 0.1 0.2 0.3 0.35 0.4 0.8 1.6
 do
 python3 << EOF > ${PFAD}/ST_Vol${VOL}_zentrum_m${m}_l${l}.dat
 import ast

@@ -3,29 +3,15 @@ Nmin=$2
 Nmax=$3
 Delaym=$4
 
-
-
-for m in 0.35
-do
-	for l in 0.15
-	do
-		for N in $(seq ${Nmin} 2 ${Nmax})
-		do
-		python3 -c "from NonDecoOitmaa import*; print('\"'+str(${VOL})+'_'+str(${N})+'_'+str(${l})+'_'+str(${m})+'\": ', GrundzustandsenergieZentrumVol(${N},${VOL},${m},${l}), end=',\n')" >> Grundzustands_dictionary_Vol.dat &
-		done
-		sleep 1m
-	done
-done
-
 for m in 0.05
 do
-	for l in 0.03 0.4 0.45 0.475  0.49
+	for l in 0.4 0.45 0.475  0.49
 	do
 		for N in $(seq ${Nmin} 2 ${Nmax})
 		do
 		python3 -c "from NonDecoOitmaa import*; print('\"'+str(${VOL})+'_'+str(${N})+'_'+str(${l})+'_'+str(${m})+'\": ', GrundzustandsenergieZentrumVol(${N},${VOL},${m},${l}), end=',\n')" >> Grundzustands_dictionary_Vol.dat &
 		done
-		sleep ${Delaym}m
+		sleep 5m
 	done
 done
 
