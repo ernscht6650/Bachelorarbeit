@@ -40,8 +40,9 @@ def extrapolVolume():
         p=np.polyfit(Ls2-0.25,np.array(MSs)-0.125,5)
         y=np.polyval(p,x-0.25)
         plt.plot(x,y+0.125)
-        print("\""+str(25)+"_"+str(N)+"_"+str(0)+"\":", (np.polyval(p,-0.25)+0.125)*25/N, ",")
-        print("\""+str(25)+"_"+str(N)+"_"+str(0.5)+"\":", (np.polyval(p,0.25)+0.125)*25/N, ",")
+        Lextrapol=[0.495, 0.485] 
+        for Le in Lextrapol:
+            print("\""+str(25)+"_"+str(N)+"_"+str(Le)+"\":", (np.polyval(p,Le-0.25)+0.125)*25/N, ",")
 
     plt.legend(loc="lower left",handletextpad=-0.5, borderpad=0.4)
     plt.show()
@@ -78,12 +79,14 @@ def extrapolInvolFinal(N,y):
 #extrapolVolume()
 
 
-for eta in range(85,96,5):
-    y=eta/100
-    i=0
-    for N in range(10,24,2):
-        extrapolInvolFinal(N,y)
-        i=i+1
+#for eta in range(100, 151,5):
+#    y=eta/100
+#    i=0
+#    for N in range(24,25,2):
+#        extrapolInvolFinal(N,y)
+#        i=i+1
 
-    plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
-    plt.show()
+
+extrapolVolume()
+plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
+plt.show()
