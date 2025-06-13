@@ -9,10 +9,10 @@ ColN=3
 ColY=2
 ColObs=6
 
-deg1=2
-Fit1Range=list(range(2,7))
-deg2=2
-Fit2Range=list(range(0,11))
+deg1=1
+Fit1Range=list(range(2,8))
+deg2=1
+Fit2Range=list(range(5,11))
 
 degA=1
 FitARange=list(range(2,6))
@@ -27,6 +27,7 @@ NumY=len(etas)
 #Data=np.loadtxt('testdata')
 
 def extrapolN(y,Data, plot=0):
+    #print(Data)
     indicesY=np.where(Data[:,ColY]==y)[0]
     #print(indicesY)
     #Data2=Data[indicesY[0]:indicesY[len(indicesY)-1],:]
@@ -118,15 +119,15 @@ def extrapoly(Data,plot=0):
 
 
 
-Masses=[0, 0.05, 0.1, 0.2]#, 0.3, 0.35, 0.4, 0.8, 1.6]
-ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.6, 0.7 ,0.8, 0.9 ,0.95]
+Masses=[0, 0.05, 0.1, 0.2, 0.3, 0.35, 0.4, 0.8, 1.6]
+ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.475, 0.485, 0.49]
 
 STs=np.zeros((len(Masses), len(ls)))
 Errs=np.zeros((len(Masses), len(ls)))
 
 
-Data=np.loadtxt('STV2_m'+str(0.2)+'_l'+str(0.7)+'.dat')
-print(Data)
+Data=np.loadtxt('STV2_korr_m'+str(0)+'_l'+str(0.2)+'.dat')
+#print(Data)
 #Aitken(1.1,Data, 1)
 extrapolN(1,Data,1)
 extrapoly(Data,1)
@@ -136,8 +137,9 @@ plt.plot(x,x**2, color='black')
 plt.gca().set_prop_cycle(None)      
 for i in range(0,len(Masses)):
     for j in range(0,len(ls)):
-        Data=np.loadtxt('STV2_m'+str(Masses[-i])+'_l'+str(ls[j])+'.dat')
-        #print(str(Masses[i]), str(ls[j]))
+        print(str(Masses[-i]), str(ls[j]))
+
+        Data=np.loadtxt('STV2_korr_m'+str(Masses[-i])+'_l'+str(ls[j])+'.dat')
         A=extrapoly(Data,0)
         
         #print(A)
@@ -159,8 +161,8 @@ plt.gca().set_prop_cycle(None)
 for i in range(0,len(Masses)):
     plt.plot(-5,0.1, marker='.', linestyle='', markersize=8, label=str(Masses[i]))
 #plt.plot(x,0*x, color='black')
-plt.xlim(0,1)
-#plt.ylim(-0.01,0.25)
+plt.xlim(0,0.5)
+plt.ylim(-0.05,0.25)
 
 plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
 

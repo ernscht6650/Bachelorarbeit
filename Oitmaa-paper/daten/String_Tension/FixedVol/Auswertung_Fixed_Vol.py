@@ -9,7 +9,7 @@ plt.rcParams.update({'font.size': 15})
 def Extrapolator(m,l,deg=2,PLOT=0):
     NumN=9
     
-    FR=[1, NumN]
+    FR=[4, NumN]
 
     Data=np.loadtxt('ST_Vol25_korr_m'+m+'_l'+l+'.dat')
 
@@ -17,8 +17,8 @@ def Extrapolator(m,l,deg=2,PLOT=0):
     Y=Data[FR[0]:FR[1], 6]
     ST=Data[FR[0]:FR[1], 5]
 
-    Np=Data[0:NumN, 3]
-    STp=Data[0:NumN, 6]
+    Np=Data[0:NumN, 2]
+    STp=Data[0:NumN, 5]
     #print(1/N, ST)
 
     p,cov=np.polyfit(1/N, ST, deg, cov=True)
@@ -40,7 +40,7 @@ def Extrapolator(m,l,deg=2,PLOT=0):
     
     return([p[deg],np.sqrt(np.diag(cov)[deg])])
 
-#Extrapolator("0", "0.95",2,1)
+Extrapolator("0.2", "0.495",2,1)
 
 x=np.linspace(0,1,1000)
 x1=np.linspace(0.05,0.5,1000)
@@ -58,7 +58,7 @@ plt.gca().set_prop_cycle(None)
 for i in range(0,len(Ms)):
     for j in range(0,len(ls)):
         print(str(Ms[i]), str(ls[j]))
-        STs[i][j],Err[i][j]=Extrapolator(str(Ms[len(Ms)-1-i]), str(ls[j]),3, 0)
+        STs[i][j],Err[i][j]=Extrapolator(str(Ms[len(Ms)-1-i]), str(ls[j]),2, 0)
 #       STs2[i][j],Err2[i][j]=Extrapolator(str(Ms[i]), str(ls[j]),3, 0)
 
     #plt.plot(ls, STs[i,:], linestyle='--', marker='.', markersize=10,  label=str(Ms[i]))#linewidth=1,
@@ -81,6 +81,7 @@ plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
 
 plt.xlabel('$l_0$',  fontsize=17)
 plt.ylabel('$\\frac{2T}{g^2}$', fontsize=17, rotation=0)
+plt.plot(x,0*x, '--', color='black')
 plt.show()    
 #print(STs)
 

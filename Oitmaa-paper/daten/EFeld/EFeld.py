@@ -44,8 +44,8 @@ Extrapolator(.4,0.525,2,1)
 
 x=np.linspace(0,1,1000)
 
-ls=[0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.475]#, 0.525, 0.55, 0.6, 0.7, 0.8, 0.9, 0.95]
-Ms=[0, 0.05, 0.1, 0.2,0.3, 0.35, 0.4, 0.8]#, 1.6]
+ls=[0, 0.05, 0.1, 0.15, 0.2, 0.25,  0.3, 0.35, 0.4, 0.45, 0.475, 0.485, 0.495, 0.5]#, 0.525, 0.55, 0.6, 0.7, 0.8, 0.9, 0.95]
+Ms=[0, 0.05, 0.1, 0.2,0.3, 0.35, 0.4, 0.8, 1.6]
 
 CCs=np.zeros((len(Ms), len(ls)))
 Err=np.zeros((len(Ms), len(ls)))
@@ -72,11 +72,12 @@ for i in range(0,len(Ms)):
     plt.plot(-5,0.1, marker='.', linestyle='', markersize=8, label=str(Ms[len(Ms)-1-i]))
 
 #plt.plot(x,0*x, color='black')
-plt.xlim(0,0.5)
-#plt.ylim(-0.02,0.25)
+plt.xlim(0,0.505)
+plt.ylim(-0.01,0.5)
 
 plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
 
+plt.plot(x,x, '--', color='black')
 plt.xlabel('$l_0$',  fontsize=17)
 plt.ylabel('$\\frac{\\mathcal F}{g}$', fontsize=17, rotation=0)
 plt.show()    
