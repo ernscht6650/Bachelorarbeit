@@ -5,9 +5,9 @@ Delaym=$4
 
 
 
-for m in 0
+for m in 0.35
 do
-	for l in 0.475  0.49
+	for l in 0.15
 	do
 		for N in $(seq ${Nmin} 2 ${Nmax})
 		do
