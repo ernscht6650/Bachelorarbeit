@@ -179,6 +179,14 @@ def ChiralCondensate_overg(N,y):
     A+=kron(eye_array(2**(N-1)),summand)
     return A/(2*N*y)
 
+def ChiralCondensate_Zentrum(N,y):
+    A=eye_array(2**N)-eye_array(2**N)
+    for k in [int(N/2), int(N/2+1)]:
+        term=(-1)**k*(eye_array(2)+sigmaz)
+        A+=kron(eye_array(2**(k-1)),kron(term,eye_array(2**(N-k))))
+        
+    return A/(4*y)
+
 def Free_Condensate_overg(moverg, y, N):
     mu=2*moverg/y
     x=1/(y**2)
@@ -369,6 +377,12 @@ def GrundzustandsenergieZentrumVol(N,Vol,mdurchg,alpha=0):
             mu2=2*(mdurchg-RenormierungVol(Vol,N,alpha))/y
             omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
             omega=0.5*np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Zentrumshamiltonian(N,Vol/N, mdurchg-RenormierungVol(Vol,N,alpha), alpha),N)@omega0[1][:,0])
+            return np.real(omega)
+
+def GrundzustandsenergieZentrumV2(N,y,mdurchg,alpha=0):
+            mu2=2*(mdurchg-Renormierung(N,y,alpha))/y
+            omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
+            omega=0.5*np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Zentrumshamiltonian(N,y, mdurchg-Renormierung(N,y,alpha), alpha),N)@omega0[1][:,0])
             return np.real(omega)
 
 

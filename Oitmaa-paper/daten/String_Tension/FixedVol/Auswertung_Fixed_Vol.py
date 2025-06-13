@@ -7,18 +7,18 @@ plt.rcParams['text.usetex'] = True
 plt.rcParams.update({'font.size': 15})
 
 def Extrapolator(m,l,deg=2,PLOT=0):
-    NumN=9
+    NumN=8
     
-    FR=[4, NumN]
+    FR=[3, NumN]
 
-    Data=np.loadtxt('ST_Vol25_korr_m'+m+'_l'+l+'.dat')
+    Data=np.loadtxt('ST_Vol25_zentrum_m'+m+'_l'+l+'.dat')
 
-    N=Data[FR[0]:FR[1], 2]
-    Y=Data[FR[0]:FR[1], 6]
-    ST=Data[FR[0]:FR[1], 5]
+    N=Data[FR[0]:FR[1], 0]
+    #Y=Data[FR[0]:FR[1], 6]
+    ST=Data[FR[0]:FR[1], 6]
 
-    Np=Data[0:NumN, 2]
-    STp=Data[0:NumN, 5]
+    Np=Data[0:NumN, 0]
+    STp=Data[0:NumN, 6]
     #print(1/N, ST)
 
     p,cov=np.polyfit(1/N, ST, deg, cov=True)
@@ -40,14 +40,14 @@ def Extrapolator(m,l,deg=2,PLOT=0):
     
     return([p[deg],np.sqrt(np.diag(cov)[deg])])
 
-Extrapolator("0.2", "0.495",2,1)
+Extrapolator("0.2", "0.49",2,1)
 
 x=np.linspace(0,1,1000)
 x1=np.linspace(0.05,0.5,1000)
 
 
 plt.plot(x,x**2, color='black')
-ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.475, 0.485, 0.495, 0.515, 0.525, 0.55, 0.6, 0.7, 0.8, 0.9, 0.95]
+ls=[0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.475, 0.485, 0.49, 0.5]#, 0.515, 0.525, 0.55, 0.6, 0.7, 0.8, 0.9, 0.95]
 Ms=[0, 0.05, 0.1, 0.2,0.3, 0.35, 0.4, 0.8, 1.6]
 STs=np.zeros((len(Ms), len(ls)))
 Err=np.zeros((len(Ms), len(ls)))
