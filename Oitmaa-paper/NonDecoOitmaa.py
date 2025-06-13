@@ -25,6 +25,17 @@ with open('MS_AllesMoegliche_N_y_l.dat') as f:
     data = f.read()
 dict = ast.literal_eval('{'+data+'}')
 
+def Zentrumshamiltonian(N,y,mdurchg,l):
+    mu=2*mdurchg/y
+    A=mu*eye_array(2**N)
+    for k in [N/2, N/2+1]:
+        term=mu/2*(-1)**k*sigmaz
+        term2=1/(y**2)*(kron(sigmap,sigmam)+kron(sigmam,sigmap))
+        A+=kron(eye_array(2**(k-1)), kron(term, eye_array(2**(N-k))))
+        A+=Inter(k,N,l)
+        A+=kron(eye_array(2**(k-1), kron(term2, eye_array(2**(N-k-1)))))
+    return A
+
 #Terme des Hamiltonians
 def Herm (A):
     return np.conjugate(np.transpose(A))
@@ -348,13 +359,21 @@ def StringtensionVol(N,Vol,mdurchg,alpha):
 def GrundzustandsenergieVol(N,Vol,mdurchg,alpha=0):
             y=Vol/N
             mu2=2*(mdurchg-RenormierungVol(Vol,N,0))/y
-            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
             #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
             return omega0[0]/N
 
+def GrundzustandsenergieZentrumVol(N,Vol,mdurchg,alpha=0):
+            y=Vol/N
+            mu2=2*(mdurchg-RenormierungVol(Vol,N,alpha))/y
+            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True))
+            omega=0.5*np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Zentrumshamiltonian(N,Vol/N, mdurchg, alpha),N)@omega0[1][:,0])
+            return omega
+
+
 def GrundzustandsenergieV2(N,y,mdurchg,alpha=0):
             mu2=2*(mdurchg-Renormierung(N,y,0))/y
-            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
+            omega0=np.real(linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,alpha)+mu2*MassTerm(N),N), k=1, which='SR', return_eigenvectors=False))
             #print(mdurchg, alpha, y, N, omega0[0], omegaAlpha[0], (omegaAlpha[0]-omega0[0])/N)
             return omega0[0]/N
 
