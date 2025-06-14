@@ -1,4 +1,6 @@
-sleep 120m
+delay=$1
+
+#sleep 120m
 #for l in  0.175 0.15   
 #do 
 #bash MassShiftV2.sh ${l} 10 24 80 95
@@ -36,23 +38,29 @@ sleep 120m
 #done
 #done
 
-sleep 120m
-for m in   0.35  
-do
-for l in  0.1 0.2 0.3 0.4 0.45
-do
-python3 -c "from OitmaaV2 import *; ComputeCondensateV2(${m}, ${l},10,24)" >> CC_V2_m${m}_l${l}.dat &
-sleep 120m
-done
-done
+#sleep 120m
+#for m in   0.35  
+#do
+#for l in  0.1 0.2 0.3 0.4 0.45
+#do
+#python3 -c "from OitmaaV2 import *; ComputeCondensateV2(${m}, ${l},10,24)" >> CC_V2_m${m}_l${l}.dat &
+#sleep ${delay}
+#done
+#done
 
 
-for m in    0.4 0.8 1.6 
+python3 -c "from OitmaaV2 import *; ComputeCondensateV2(0.05, 0.2,10,24)" >> CC_V2_m0.05_l0.2.dat 
+sleep ${delay}m
+
+python3 -c "from OitmaaV2 import *; ComputeCondensateV2(0.2, 0.3,10,24)" >> CC_V2_m0.2_l0.3.dat
+sleep ${delay}m
+
+for m in  0.35  0.4 0.8 1.6 
 do
 for l in 0.05 0.1 0.2 0.3 0.4 0.45
 do
 python3 -c "from OitmaaV2 import *; ComputeCondensateV2(${m}, ${l},10,24)" >> CC_V2_m${m}_l${l}.dat &
-sleep 120m
+sleep ${delay}m
 done
 done
 
@@ -63,7 +71,7 @@ do
 for l in 0 0.15 0.25 0.35 0.5
 do
 python3 -c "from OitmaaV2 import *; ComputeCondensateV2(${m}, ${l},10,24)" >> CC_V2_m${m}_l${l}.dat &
-sleep 120m
+sleep ${delay}m
 done
 done
 
