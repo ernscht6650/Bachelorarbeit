@@ -249,7 +249,7 @@ def SkalarV2(mdurchg,l0):
 
 #@concurrent
 def Skalar(mdurchg, N, y, l0):
-    K=20
+    K=15
     mu=2*mdurchg/y
     omegaprime=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=K, which='SR', return_eigenvectors=True)
     SRprime=NonZeroSpin_entferner(SR(N), N)

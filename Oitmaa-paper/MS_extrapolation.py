@@ -15,7 +15,11 @@ def RenormierungVol(Vol, N, l0):
     return dictVol[str(Vol)+"_"+str(N)+"_"+str(l0)]
 
 def Renormierung(N,y,l0):
-	return dict[str(N)+"_"+str(y)+"_"+str(l0)]
+    if l0 > 0.5:
+        return dict[str(N)+"_"+str(y)+"_"+str(round(1-l0, 4))]
+    else:
+	    return dict[str(N)+"_"+str(y)+"_"+str(l0)]
+
 
 
 def extrapolVol(Vol,N, Ls, plot=0):
@@ -60,9 +64,9 @@ def extrapolInfvol(N,y, Ls, plot=0, mogeln=0):
 
 def extrapolInvolFinal(N,y):
     Ls=[0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.3, 0.35, 0.4, 0.45]#, 0.475, 0.485]
-    Ls=[0.05, 0.1, 0.2, 0.3, 0.4]#, 0.475, 0.485]
-    Ls2=np.array([ 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3, 0.325, 0.35, 0.375])
-    Ls2=np.array([0.1, 0.2, 0.3, 0.4])
+    Ls=[0.05, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.3, 0.4]#, 0.475, 0.485]
+    Ls2=np.array([0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3, 0.325, 0.35])
+    #Ls2=np.array([0.1, 0.2, 0.3, 0.4])
     extrapolInfvol(N,y,Ls,1,0)
     MSs=extrapolInfvol(N,y,Ls2,0,1)
     #plt.plot(Ls2,MSs )
@@ -72,8 +76,9 @@ def extrapolInvolFinal(N,y):
     plt.plot(x,yfit+0.125, color=colors[i])
     
     #print(y*(np.polyval(p,-0.25)+0.125))
-    print("\""+str(N)+"_"+str(y)+"_"+str(0)+"\":", (np.polyval(p,-0.25)+0.125)*y, ",")
-    print("\""+str(N)+"_"+str(y)+"_"+str(0.5)+"\":", (np.polyval(p,0.25)+0.125)*y, ",")
+    for Lp in [0, 0.05, 0.1, 0.4, 0.45, 0.5]:
+        print("\""+str(N)+"_"+str(y)+"_"+str(Lp)+"\":", (np.polyval(p,Lp-0.25)+0.125)*y, ",")
+    #print("\""+str(N)+"_"+str(y)+"_"+str(0.5)+"\":", (np.polyval(p,0.25)+0.125)*y, ",")
 #for N in range(10,25,4):
 #    extrapolInvolFinal(N,1.0)
 #plt.legend(loc="lower left",handletextpad=-0.5, borderpad=0.4)
@@ -81,10 +86,10 @@ def extrapolInvolFinal(N,y):
 #extrapolVolume()
 
 
-for eta in range(80, 95,5):
+for eta in range(95, 96,5):
     y=eta/100
     i=0
-    for N in range(24,25,2):
+    for N in range(10,25,2):
         extrapolInvolFinal(N,y)
         i=i+1
 
