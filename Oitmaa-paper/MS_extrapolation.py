@@ -55,15 +55,17 @@ def extrapolInfvol(N,y, Ls, plot=0, mogeln=0):
         else:
             MSs.append(Renormierung(N,y,l)/y)
     if plot == 1:
-        plt.plot(Ls, MSs, linestyle=' ', marker='.', markersize=10, label=str(N)+", "+str(y), color=colors[i])
+       plt.plot(Ls, MSs, linestyle='', marker='.', markersize=10, label=str(N)+", "+str(y), color=colors[i])
     return MSs
 
 def extrapolInvolFinal(N,y):
     Ls=[0.05, 0.075, 0.1, 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.3, 0.35, 0.4, 0.45]#, 0.475, 0.485]
+    Ls=[0.05, 0.1, 0.2, 0.3, 0.4]#, 0.475, 0.485]
     Ls2=np.array([ 0.125, 0.15, 0.175, 0.2, 0.225, 0.25, 0.275, 0.3, 0.325, 0.35, 0.375])
+    Ls2=np.array([0.1, 0.2, 0.3, 0.4])
     extrapolInfvol(N,y,Ls,1,0)
     MSs=extrapolInfvol(N,y,Ls2,0,1)
-    plt.plot(Ls2,MSs )
+    #plt.plot(Ls2,MSs )
     p=np.polyfit(Ls2-0.25,np.array(MSs)-0.125,3)
     #print(p)
     yfit=np.polyval(p,x-0.25)
@@ -79,14 +81,14 @@ def extrapolInvolFinal(N,y):
 #extrapolVolume()
 
 
-#for eta in range(100, 151,5):
-#    y=eta/100
-#    i=0
-#    for N in range(24,25,2):
-#        extrapolInvolFinal(N,y)
-#        i=i+1
+for eta in range(80, 95,5):
+    y=eta/100
+    i=0
+    for N in range(24,25,2):
+        extrapolInvolFinal(N,y)
+        i=i+1
 
 
-extrapolVolume()
+#extrapolVolume()
 plt.legend(loc="upper left",handletextpad=-0.5, borderpad=0.4)
 plt.show()
