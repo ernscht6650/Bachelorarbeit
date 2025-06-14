@@ -496,7 +496,7 @@ def ComputeCondensateV2(mdurchg, alpha, Nmin=10, Nmax=24):
     CCs=[[0]*5]*11*8
     Ns=list(range(Nmin, Nmax+1, 2))
     etas=list(range(100,151,5))
-    for eta in range(100,151,5):
+    for eta in range(100,136,5):
         for N in range(Nmin, Nmax+1,2):
             CCs[int((N-Nmin)/2+8*(eta-100)/5)]=EW_Condensate(mdurchg-Renormierung(N,eta/100,alpha), alpha, N,eta/100)
 
