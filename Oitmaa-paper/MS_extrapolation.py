@@ -76,7 +76,7 @@ def extrapolInvolFinal(N,y):
     plt.plot(x,yfit+0.125, color=colors[i])
     
     #print(y*(np.polyval(p,-0.25)+0.125))
-    for Lp in [0, 0.05, 0.1,0.35, 0.4, 0.45, 0.5]:
+    for Lp in [0.475]:
         print("\""+str(N)+"_"+str(y)+"_"+str(Lp)+"\":", (np.polyval(p,Lp-0.25)+0.125)*y, ",")
     #print("\""+str(N)+"_"+str(y)+"_"+str(0.5)+"\":", (np.polyval(p,0.25)+0.125)*y, ",")
 #for N in range(10,25,4):
@@ -86,7 +86,7 @@ def extrapolInvolFinal(N,y):
 #extrapolVolume()
 
 
-for eta in range(80, 96,5):
+for eta in range(80,96,5):
     y=eta/100
     i=0
     for N in range(10,25,2):

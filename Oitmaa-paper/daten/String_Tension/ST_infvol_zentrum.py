@@ -18,7 +18,7 @@ degA=1
 FitARange=list(range(2,6))
 
 NumN=8
-etas=list(range(100,136,5))
+etas=list(range(80,136,5))
 #etas=list(range(30,91,10))
 
 NumY=len(etas)
@@ -154,7 +154,7 @@ ls=[0.05, 0.1, 0.15,0.2, 0.25,0.3, 0.35, 0.4, 0.45, 0.475, 0.5]
 STs=np.zeros((len(Masses), len(ls)))
 Errs=np.zeros((len(Masses), len(ls)))
 
-Data=np.loadtxt('ST_V2_zentrum_m'+str(0)+'_l'+str(0.45)+'.dat')
+Data=np.loadtxt('ST_V2_zentrum_m'+str(0)+'_l'+str(0.2)+'.dat')
 
 #print(Data)
 Aitken(1,Data, 1)
