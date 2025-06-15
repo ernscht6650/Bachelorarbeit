@@ -23,7 +23,7 @@ dictVol = ast.literal_eval('{'+data+'}')
 def GZDV2(N,y, mdurchg, l0):
         return dictVol[str(N)+"_"+str(y)+"_"+str(l0)+"_"+str(mdurchg)]
 
-for eta in range(100,136,5):
+for eta in range(80,136,5):
 	y=eta/100
 	for N in range(${Nmin}, ${Nmax}+1,2):
 		print(N, y, f"{mdurchg:3.2f}", f"{l0:3.2f}", f"{GZDV2(N,y, mdurchg, 0):15.13f}", f"{GZDV2(N,y, mdurchg, l0):15.13f}", f"{GZDV2(N,y, mdurchg, l0)-GZDV2(N,y, mdurchg, 0):15.13f}")
