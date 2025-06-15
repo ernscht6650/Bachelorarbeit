@@ -12,7 +12,7 @@ def Extrapolator(m,l,deg=2,PLOT=0):
 
     FR=[4, NumN]
 
-    Data=np.loadtxt('/home/florianstein/Documents/Bachelorarbeit/Oitmaa-paper/daten/ChiralCondensate/FixedVol/CC_Vol25_m'+m+'_l'+l+'.dat')
+    Data=np.loadtxt('CC_Vol25_m'+m+'_l'+l+'.dat')
 
     N=Data[FR[0]:FR[1], 0]
     #Y=Data[FR[0]:FR[1], 3]
@@ -42,7 +42,7 @@ def Extrapolator(m,l,deg=2,PLOT=0):
     
     return([p[deg],np.sqrt(np.diag(cov)[deg])])
 
-Extrapolator("1.6", "0.45",2,1)
+Extrapolator("0", "0.8",2,1)
 
 x=np.linspace(0,0.5,1000)
 x1=np.linspace(0.05,0.5,1000)
@@ -50,8 +50,9 @@ x1=np.linspace(0.05,0.5,1000)
 
 
 #plot(x,x**2, color='black')
-ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.475, 0.485, 0.495] #, 0.515, 0.525, 0.55, 0.6, 0.7, 0.8, 0.9, 0.95]
-Ms=[0, 0.05, 0.1, 0.2,0.3, 0.35, 0.4, 0.8, 1.6]
+ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.475, 0.485, 0.495, 0.515, 0.525, 0.55, 0.6, 0.7, 0.8, 0.9, 0.95]
+ls=[0.05, 0.1, 0.2, 0.3, 0.4, 0.45, 0.475, 0.485, 0.495]
+Ms=[0]#, 0.05, 0.1, 0.2,0.3, 0.35, 0.4, 0.8, 1.6]
 STs=np.zeros((len(Ms), len(ls)))
 Err=np.zeros((len(Ms), len(ls)))
 STs2=np.zeros((len(Ms), len(ls)))

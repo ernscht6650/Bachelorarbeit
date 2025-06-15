@@ -529,6 +529,15 @@ def EW_Condensate(moverg, l0, N,y):
     Condensate=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(ChiralCondensate_overg(N,y),N)@omega0[1][:,0])
     return [Condensate, Free_Condensate_overg(moverg,y,N), Condensate-Free_Condensate_overg(moverg,y,N), N,y]
 
+def EW_Condensate_Zentrum(Mren, Mlat, l0, N,y):
+    mu=2*Mlat/y
+    omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
+    Condensate=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(ChiralCondensate_Zentrum(N,y),N)@omega0[1][:,0])
+    FC1=Free_Condensate_overg(Mren,y,N)
+    FC2=Free_Condensate_overg(Mlat,y,N)
+    return [Condensate, FC1, FC2, Condensate-FC1, Condensate-FC2]
+
+
 
 def ComputeCondensate(Vol,mdurchg, alpha, Nmin=10, Nmax=26):
     CCs=[0*3]*9
