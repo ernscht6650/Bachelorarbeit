@@ -25,3 +25,12 @@ echo $m $l
 sleep ${delay}
 done
 done 
+
+
+for m in 0 0.05 0.1 0.2 0.3 0.4 0.8 1.6
+do
+for l in 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.45 0.5
+do
+mv CC_Vol25_m${m}_l${l}.dat CC_Vol25_zentrum_m${m}_l${l}.dat 
+done
+done

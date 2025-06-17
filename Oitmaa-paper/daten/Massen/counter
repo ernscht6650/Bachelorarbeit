@@ -1,0 +1,15 @@
+for l in 0 0.1 0.2 0.3 0.4 0.5 0.45 0.5
+do
+for m in 0 0.05 0.1 0.2 0.4 0.8 1.6
+do
+
+#cat MassenV2_m${m}_l${l}.dat | wc -l
+#cat MassenV2_m${m}_l${l}.dat | uniq |wc -l
+
+cat MassenV2_m${m}_l${l}.dat | sort -n | awk 'BEGIN {N1=$1; y1=$2; print $1, $2, $3, $4, $5, $6, $7, $8}; {N2=N1; y2=y1; N1=$1; y1=$2}; y2!=y1 { print $1, $2, $3, $4, $5, $6, $7, $8}' > Massen_V2_sort_m${m}_l${l}.dat 
+A=$(cat Massen_V2_sort_m${m}_l${l}.dat | wc -l)
+if [ $A != 49 ]; then
+	echo $m $l
+fi
+done
+done
