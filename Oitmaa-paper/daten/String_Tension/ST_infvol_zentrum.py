@@ -18,7 +18,7 @@ degA=1
 FitARange=list(range(2,6))
 
 NumN=8
-etas=list(range(80,136,5))
+etas=list(range(90,136,5))
 #etas=list(range(30,91,10))
 
 NumY=len(etas)
