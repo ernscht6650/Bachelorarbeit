@@ -473,14 +473,20 @@ def Erwartungswert_Foverg(N,y,l0,mdurchg):
 def EwLadung(N,y,l0,mdurchg):
     mu=2*mdurchg/y
     omega0=linalg.eigs(NonZeroSpin_entferner(V(N)/(y**2)+WL(N,l0)+mu*MassTerm(N),N), k=1, which='SR', return_eigenvectors=True)
+    Ls=[0]*(N+1)
+    Ls[0]=l0
     for k in range(1, N+1):
-        print(k, 
-        np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Q_n(N,k),N)@omega0[1][:,0]), 
-        np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0]),
-        0.5*(np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k,l0),N)@omega0[1][:,0])+\
-            np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0])))    
-    
-
+    #    print(k, 
+    #    np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(Q_n(N,k),N)@omega0[1][:,0]), 
+    #    np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0]),
+    #    0.5*(np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k,l0),N)@omega0[1][:,0])+\
+    #        np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0])),
+    #	0.5/l0*(np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k,l0),N)@omega0[1][:,0])+\
+    #        np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k-1,l0),N)@omega0[1][:,0])))    
+        Ls[k]=np.real(Herm(omega0[1][:,0])@NonZeroSpin_entferner(L_n(N,k,l0),N)@omega0[1][:,0])
+    for k in range(1,N+1): 
+       print(k, Ls[k]-Ls[k-1],Ls[k], 0.5*(Ls[k]+Ls[k-1]),  (Ls[k]+Ls[k-1])/(Ls[int(N/2)]+Ls[int(N/2+1)])) 
+   
 
 
 #def ComputeMassShift(l0, Nmax=22, Nmin=10, etamin=100,etamax=150):
